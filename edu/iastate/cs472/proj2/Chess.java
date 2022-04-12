@@ -14,23 +14,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.Random;
 
 /**
- * This panel lets two users play checkers against each other.
- * Red always starts the game.  If a player can jump an opponent's
- * piece, then the player must jump.  When a player can make no more
- * moves, the game ends.
- *
- * The class has a main() routine that lets it be run as a stand-alone
- * application.  The application just opens a window that uses an object
- * of type Checkers as its content pane.
- * 
- * Update 03/18: adapt to the changes in CheckersMove.
- * 
+ * This panel lets two users play chess against each other.
  */
-public class Checkers extends JPanel {
+public class Chess extends JPanel {
 
     /**
-     * Main routine makes it possible to run Checkers as a stand-alone
-     * application.  Opens a window showing a Checkers panel; the program
+     * Main routine makes it possible to run Chess as a stand-alone
+     * application.  Opens a window showing a Chess panel; the program
      * ends when the user closes the window.
      */
 	//AIKEY
@@ -39,15 +29,15 @@ public class Checkers extends JPanel {
     static boolean chengeValue = false;
     
 	public static void main(String[] args) {
-		System.out.println("A Checker-Playing Agent");
+		System.out.println("A Chess-Playing Agent");
 		// 1: use alpha-beta pruning throughout the game.
 		// 2: use Monte Carlo tree search throughout the game.
 		// 3: randomly choose between alpha-beta and MCTS to decide on the next move. 
 		System.out.println("keys: 1 (alpha-beta)  2 (MCTS)  3 (random)\n");
-        JFrame window = new JFrame("Checkers");
+        JFrame window = new JFrame("Chess");
         
         
-        Checkers content = new Checkers();
+        Chess content = new Chess();
         window.setContentPane(content);
         
         window.pack();
@@ -72,9 +62,9 @@ public class Checkers extends JPanel {
      * The constructor creates the Board (which in turn creates and manages
      * the buttons and message label), adds all the components, and sets
      * the bounds of the components.  A null layout is used.  (This is
-     * the only thing that is done in the main Checkers class.)
+     * the only thing that is done in the main Chess class.)
      */
-    public Checkers() {
+    public Chess() {
 
         setLayout(null);  // I will do the layout myself.
         //setPreferredSize( new Dimension(350,250) );
@@ -122,8 +112,8 @@ public class Checkers extends JPanel {
      * the checkerboard.
      */
     public static class PreBoard extends JPanel{
-    	CheckersData preBoard;
-    	CheckersMove moveAI;
+    	ChessData preBoard;
+    	ChessMove moveAI;
     	//setBackground(Color.BLACK);
     	//boolean gameInProgress=true;
     	PreBoard()
@@ -132,12 +122,12 @@ public class Checkers extends JPanel {
     		premessage.setFont(new  Font("Serif", Font.BOLD, 14));
     		premessage.setForeground(Color.green);
             premessage.setText("Initialization");
-            preBoard = new CheckersData();
+            preBoard = new ChessData();
             preBoard.setUpGame();
-            moveAI = new CheckersMove();
+            moveAI = new ChessMove();
             repaint();
     	}
-    	public void drawBoard(CheckersData currentBoard, CheckersMove move)
+    	public void drawBoard(ChessData currentBoard, ChessMove move)
     	{
     		premessage = new JLabel("",JLabel.LEFT);
     		premessage.setFont(new  Font("Serif", Font.BOLD, 14));
@@ -147,10 +137,10 @@ public class Checkers extends JPanel {
     		moveAI = move.clone();
     		repaint();
     	}
-    	private CheckersData copyBoard(CheckersData board)
+    	private ChessData copyBoard(ChessData board)
         {
             this.preBoard = board;
-            CheckersData new_board = new CheckersData();
+            ChessData new_board = new ChessData();
             for(int i=0; i<board.board.length;i++)
             {
                 for(int j=0;j<8;j++)
@@ -162,6 +152,7 @@ public class Checkers extends JPanel {
         }
     	
     	public void paintComponent(Graphics g) {
+    	    //TODO
             /* Draw a two-pixel black border around the edges of the canvas. */
             g.setColor(Color.black);
             g.drawRect(0,0,getSize().width-1,getSize().height-1);
@@ -175,21 +166,21 @@ public class Checkers extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (preBoard.pieceAt(row,col)) {
-                        case CheckersData.RED:
+                        case ChessData.RED:
                             g.setColor(Color.RED);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case CheckersData.BLACK:
+                        case ChessData.BLACK:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case CheckersData.RED_KING:
+                        case ChessData.RED_KING:
                             g.setColor(Color.RED);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
                             g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
-                        case CheckersData.BLACK_KING:
+                        case ChessData.BLACK_KING:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
@@ -214,18 +205,18 @@ public class Checkers extends JPanel {
     }
     
     private class Board extends JPanel implements ActionListener, MouseListener {
-        CheckersData board;  // The data for the checkers board is kept here.
+        ChessData board;  // The data for the checkers board is kept here.
         //    This board is also responsible for generating
         //    lists of legal moves.
         boolean gameInProgress; // Is a game currently in progress?
         /* The next three variables are valid only when the game is in progress. */
         int currentPlayer;      // Whose turn is it now?  The possible values
-        //    are CheckersData.RED and CheckersData.BLACK.
+        //    are ChessData.RED and ChessData.BLACK.
         int selectedRow, selectedCol;  // If the current player has selected a piece to
         //     move, these give the row and column
         //     containing that piece.  If no piece is
         //     yet selected, then selectedRow is -1.
-        CheckersMove[] legalMoves;  // An array containing the legal moves for the
+        ChessData[] legalMoves;  // An array containing the legal moves for the
         //   current player.
         AdversarialSearch player_1; // AI player, Alpha-beta
         AdversarialSearch player_2; // MCTS
@@ -234,8 +225,8 @@ public class Checkers extends JPanel {
          * clicks and for clicks on the buttons.  Create the board and
          * start the first game.
          */
-        CheckersData displayBoard;
-        CheckersData agentBoard;
+        ChessData displayBoard;
+        ChessData agentBoard;
         
         Board() {
             setBackground(Color.BLACK);
@@ -247,10 +238,10 @@ public class Checkers extends JPanel {
             message = new JLabel("",JLabel.CENTER);
             message.setFont(new  Font("Serif", Font.BOLD, 14));
             message.setForeground(Color.green);
-            board = new CheckersData();
+            board = new ChessData();
             //Display board
-            displayBoard = new CheckersData();
-            agentBoard = new CheckersData();
+            displayBoard = new ChessData();
+            agentBoard = new ChessData();
             //Select the AI players.
             decideAIplayer();
             //Start new game
@@ -309,10 +300,10 @@ public class Checkers extends JPanel {
             displayBoard.setUpGame(); // S_R, Set up the pieces.
             agentBoard.setUpGame(); // S_L
             //
-            currentPlayer = CheckersData.RED;   // RED moves first.
-            player_1.setCheckersData(board);
-            player_2.setCheckersData(board);
-            legalMoves = board.getLegalMoves(CheckersData.RED);  // Get RED's legal moves.
+            currentPlayer = ChessData.RED;   // RED moves first.
+            player_1.setChessData(board);
+            player_2.setChessData(board);
+            legalMoves = board.getLegalMoves(ChessData.RED);  // Get RED's legal moves.
             selectedRow = -1;   // RED has not yet selected a piece to move.
             message.setText("Red:  Make your move.");
             gameInProgress = true;
@@ -320,7 +311,7 @@ public class Checkers extends JPanel {
             resignButton.setEnabled(true);
             
             ///
-            previous.drawBoard(agentBoard, new CheckersMove());
+            previous.drawBoard(agentBoard, new ChessMove());
             ////
             repaint();
         }
@@ -334,7 +325,7 @@ public class Checkers extends JPanel {
                 message.setText("There is no game in progress!");
                 return;
             }
-            if (currentPlayer == CheckersData.RED)
+            if (currentPlayer == ChessData.RED)
                 gameOver("RED resigns.  BLACK wins.");
             else
                 gameOver("BLACK resigns.  RED wins.");
@@ -369,11 +360,11 @@ public class Checkers extends JPanel {
                can move, mark this row and col as selected and return.  (This
                might change a previous selection.)  Reset the message, in
                case it was previously displaying an error message. */
-            for (CheckersMove legalMove : legalMoves) {
+            for (ChessMove legalMove : legalMoves) {
                 if (legalMove.rows.get(0) == row && legalMove.cols.get(0) == col) {
                     selectedRow = row;
                     selectedCol = col;
-                    if (currentPlayer == CheckersData.RED)
+                    if (currentPlayer == ChessData.RED)
                         message.setText("RED:  Make your move.");
                     else
                         message.setText("BLACK:  Make your move.");
@@ -391,7 +382,7 @@ public class Checkers extends JPanel {
 
             /* If the user clicked on a square where the selected piece can be
                legally moved, then make the move and return. */
-            for (CheckersMove legalMove : legalMoves) {
+            for (ChessMove legalMove : legalMoves) {
                 if (legalMove.rows.get(0) == selectedRow && legalMove.cols.get(0) == selectedCol
                         && legalMove.rows.get(legalMove.rows.size()-1) == row && legalMove.cols.get(legalMove.cols.size()-1) == col) {
                     doMakeMove(legalMove);
@@ -413,17 +404,17 @@ public class Checkers extends JPanel {
          * move.  Make the move, and then either end or continue the game
          * appropriately.
          */
-        void doMakeMove(CheckersMove move) {	
+        void doMakeMove(ChessMove move) {	
             board.makeMove(move);
             agentBoard=copyBoard(board);
             
-            CheckersMove moveAI = new CheckersMove();
+            ChessMove moveAI = new ChessMove();
              /* The current player's turn is ended, so change to the other player.
                 Get that player's legal moves.  If the player has no legal moves,
                 then the game ends. */
             //Play checkers game on agentboard
-            if (currentPlayer == CheckersData.RED) {
-                currentPlayer = CheckersData.BLACK;
+            if (currentPlayer == ChessData.RED) {
+                currentPlayer = ChessData.BLACK;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null) {
                     gameOver("BLACK has no moves.  RED wins.");
@@ -435,8 +426,8 @@ public class Checkers extends JPanel {
                     message.setText("BLACK:  Now AI's turn.");
                 }
 
-                player_1.setCheckersData(board);
-                player_2.setCheckersData(board);
+                player_1.setChessData(board);
+                player_2.setChessData(board);
                 
                 switch(aiKey){
                 case 1: moveAI = player_1.makeMove(legalMoves); break;
@@ -462,7 +453,7 @@ public class Checkers extends JPanel {
             
             previous.drawBoard(agentBoard, moveAI);
 
-            currentPlayer = CheckersData.RED;
+            currentPlayer = ChessData.RED;
             legalMoves = board.getLegalMoves(currentPlayer);
             if (legalMoves == null)
                 gameOver("RED has no moves.  BLACK wins.");
@@ -517,21 +508,21 @@ public class Checkers extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (displayBoard.pieceAt(row,col)) {
-                        case CheckersData.RED:
+                        case ChessData.RED:
                             g.setColor(Color.RED);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case CheckersData.BLACK:
+                        case ChessData.BLACK:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case CheckersData.RED_KING:
+                        case ChessData.RED_KING:
                             g.setColor(Color.RED);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
                             g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
-                        case CheckersData.BLACK_KING:
+                        case ChessData.BLACK_KING:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
@@ -547,7 +538,7 @@ public class Checkers extends JPanel {
             if (gameInProgress) {
                 /* First, draw a 2-pixel cyan border around the pieces that can be moved. */
                 g.setColor(Color.cyan);
-                for (CheckersMove legalMove : legalMoves) {
+                for (ChessMove legalMove : legalMoves) {
                     g.drawRect(2 + legalMove.cols.get(0) * 20, 2 + legalMove.rows.get(0) * 20, 19, 19);
                     g.drawRect(3 + legalMove.cols.get(0) * 20, 3 + legalMove.rows.get(0) * 20, 17, 17);
                 }
@@ -559,7 +550,7 @@ public class Checkers extends JPanel {
                     g.drawRect(2 + selectedCol*20, 2 + selectedRow*20, 19, 19);
                     g.drawRect(3 + selectedCol*20, 3 + selectedRow*20, 17, 17);
                     g.setColor(Color.green);
-                    for (CheckersMove legalMove : legalMoves) {
+                    for (ChessMove legalMove : legalMoves) {
                         if (legalMove.cols.get(0) == selectedCol && legalMove.rows.get(0) == selectedRow) {
                             //g.drawRect(2 + legalMove.toCol * 20, 2 + legalMove.toRow * 20, 19, 19);
                             //g.drawRect(3 + legalMove.toCol * 20, 3 + legalMove.toRow * 20, 17, 17);
@@ -576,10 +567,10 @@ public class Checkers extends JPanel {
 
         }  // end paintComponent()
 
-        private CheckersData copyBoard(CheckersData board)
+        private ChessData copyBoard(ChessData board)
         {
             this.board = board;
-            CheckersData new_board = new CheckersData();
+            ChessData new_board = new ChessData();
             for(int i=0; i<board.board.length;i++)
             {
                 for(int j=0;j<8;j++)
@@ -631,4 +622,4 @@ public class Checkers extends JPanel {
             System.err.format("IOException: %s%n", e);
         }
     }
-} // end class Checkers
+} // end class Chess

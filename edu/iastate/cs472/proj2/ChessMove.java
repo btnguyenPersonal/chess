@@ -3,25 +3,18 @@ package edu.iastate.cs472.proj2;
 import java.util.ArrayList;
 
 /**
- * A CheckersMove object represents a move in the game of Checkers.
+ * A ChessMove object represents a move in the game of Chess.
  * It holds the row and column of the piece that is to be moved
  * and the row and column of the square to which it is to be moved.
  * (This class makes no guarantee that the move is legal.)
  *
- * Update 03/18: It represents an action in the game of Checkers.
- * There may be a single move or multiple jumps in an action.
- * It holds a sequence of the rows and columns of the piece
- * that is to be moved, for example:
- * a single move: (2, 0) -> (3, 1)
- * a sequnce of jumps: (2, 0) -> (4, 2) -> (6, 0)
- *
  */
-public class CheckersMove {
+public class ChessMove {
     
     ArrayList<Integer> rows = new ArrayList<Integer>();
     ArrayList<Integer> cols = new ArrayList<Integer>();
     
-    CheckersMove(int r1, int c1, int r2, int c2) {
+    ChessMove(int r1, int c1, int r2, int c2) {
         // Constructor, a single move from
         //(r1, c1) to (r2, c2)
         
@@ -34,7 +27,7 @@ public class CheckersMove {
         cols.add(c2);
     }
     
-    CheckersMove() {
+    ChessMove() {
         // Constructor, create an empty move
     }
 
@@ -63,8 +56,8 @@ public class CheckersMove {
     
     //get a copy of this move
     @Override
-    public CheckersMove clone() {
-        CheckersMove move = new CheckersMove();
+    public ChessMove clone() {
+        ChessMove move = new ChessMove();
         
         move.rows.addAll(this.rows);
         move.cols.addAll(this.cols);
@@ -88,4 +81,4 @@ public class CheckersMove {
         return output;
     }
 
-}  // end class CheckersMove.
+}  // end class ChessMove.
