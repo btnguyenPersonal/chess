@@ -19,10 +19,21 @@ public class ChessData {
      */
 
     static final int EMPTY = 0,
-            RED = 1,
-            RED_KING = 2,
-            BLACK = 3,
-            BLACK_KING = 4;
+            WHITE_PAWN = 1,
+            WHITE_ROOK = 2,
+            WHITE_KNIGHT = 3,
+            WHITE_BISHOP = 4,
+            WHITE_QUEEN = 5,
+            WHITE_KING = 6,
+            BLACK_PAWN = 7,
+            BLACK_ROOK = 8,
+            BLACK_KNIGHT = 9,
+            BLACK_BISHOP = 10,
+            BLACK_QUEEN = 11,
+            BLACK_KING = 12;
+
+    static final int WHITE_PLAYER = 0,
+            BLACK_PLAYER = 1;
 
     int[][] board; // board[r][c] is the contents of row r, column c.
 
@@ -46,15 +57,31 @@ public class ChessData {
             int[] row = board[i];
             sb.append(8 - i).append(" ");
             for (int n : row) {
-                if (n == 0) {
+                if (n == EMPTY) {
                     sb.append(" ");
-                } else if (n == 1) {
+                } else if (n == WHITE_PAWN) {
+                    sb.append(ANSI_RED + "P" + ANSI_RESET);
+                } else if (n == WHITE_ROOK) {
                     sb.append(ANSI_RED + "R" + ANSI_RESET);
-                } else if (n == 2) {
+                } else if (n == WHITE_KNIGHT) {
                     sb.append(ANSI_RED + "K" + ANSI_RESET);
-                } else if (n == 3) {
+                } else if (n == WHITE_BISHOP) {
+                    sb.append(ANSI_RED + "B" + ANSI_RESET);
+                } else if (n == WHITE_QUEEN) {
+                    sb.append(ANSI_RED + "Q" + ANSI_RESET);
+                } else if (n == WHITE_KING) {
+                    sb.append(ANSI_RED + "K" + ANSI_RESET);
+                } else if (n == BLACK_PAWN) {
+                    sb.append(ANSI_YELLOW + "P" + ANSI_RESET);
+                } else if (n == BLACK_ROOK) {
+                    sb.append(ANSI_YELLOW + "R" + ANSI_RESET);
+                } else if (n == BLACK_KNIGHT) {
+                    sb.append(ANSI_YELLOW + "K" + ANSI_RESET);
+                } else if (n == BLACK_BISHOP) {
                     sb.append(ANSI_YELLOW + "B" + ANSI_RESET);
-                } else if (n == 4) {
+                } else if (n == BLACK_QUEEN) {
+                    sb.append(ANSI_YELLOW + "Q" + ANSI_RESET);
+                } else if (n == BLACK_KING) {
                     sb.append(ANSI_YELLOW + "K" + ANSI_RESET);
                 }
                 sb.append(" ");
@@ -79,15 +106,11 @@ public class ChessData {
                 board[row][col] = EMPTY;
             }
         }
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (row % 2 == col % 2 && row < 3) {
-                    board[row][col] = BLACK;
-                }
-                if (row % 2 == col % 2 && row > 4) {
-                    board[row][col] = RED;
-                }
-            }
+        for (int i = 0; i < 8; i++) {
+            board[1][i] = WHITE_PAWN;
+        }
+        for (int i = 0; i < 8; i++) {
+            board[6][i] = BLACK_PAWN;
         }
     }
 
@@ -98,45 +121,15 @@ public class ChessData {
         return board[row][col];
     }
 
-    /**
-     * Make the specified move. It is assumed that move
-     * is non-null and that the move it represents is legal.
-     *
-     * Update 03/18: make a single move or a sequence of jumps
-     * recorded in rows and cols.
-     *
-     */
     void makeMove(ChessMove move) {
-        int l = move.rows.size();
-        for (int i = 0; i < l - 1; i++)
-            makeMove(move.rows.get(i), move.cols.get(i), move.rows.get(i + 1), move.cols.get(i + 1));
+        // TODO
     }
 
     /**
-     * Make the move from (fromRow,fromCol) to (toRow,toCol). It is
-     * assumed that this move is legal. If the move is a jump, the
-     * jumped piece is removed from the board. If a piece moves to
-     * the last row on the opponent's side of the board, the
-     * piece becomes a king.
-     *
-     * @param fromRow row index of the from square
-     * @param fromCol column index of the from square
-     * @param toRow   row index of the to square
-     * @param toCol   column index of the to square
+     * Make the move from (fromRow,fromCol) to (toRow,toCol).
      */
     void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
-        // Update the board for the given move. You need to take care of the following
-        // situations:
-        // 1. move the piece from (fromRow,fromCol) to (toRow,toCol)
-        // 2. if this move is a jump, remove the captured piece
-        // 3. if the piece moves into the kings row on the opponent's side of the board,
-        // crowned it as a king
-    }
-
-    void removeJumpedPiece(int fromRow, int fromCol, int toRow, int toCol) {
-        int row = (fromRow + toRow) / 2;
-        int col = (fromCol + toCol) / 2;
-        board[row][col] = EMPTY;
+        // TODO
     }
 
     /**
@@ -151,21 +144,10 @@ public class ChessData {
      * @param player color of the player, RED or BLACK
      */
     ChessMove[] getLegalMoves(int player) {
+        // TODO
         ArrayList<ChessMove> legalMoves = new ArrayList<ChessMove>();
+        ChessMove[] output = new ChessMove[1];
         return output;
-    }
-
-    ArrayList<ChessMove> getLegalMovesHelper(int player, boolean hasJumps) {
-        return output;
-    }
-
-    boolean isType(int player, int boardSquare) {
-        return false;
-    }
-
-    ArrayList<ChessMove> getLegalMovesSingle(int player, int row, int col) {
-        ArrayList<ChessMove> legalMoves = new ArrayList<ChessMove>();
-        return legalMoves;
     }
 
     boolean checkIf(int row, int col, int piece) {
@@ -176,46 +158,4 @@ public class ChessData {
         }
     }
 
-    boolean boardContainsJumps(int player) {
-        return false;
-    }
-
-    int getNumJumps(int player) {
-        int i = 0;
-        return i;
-    }
-
-    ArrayList<ChessMove> getDoubleJumpsFrom(ChessMove previousMove, boolean isKing, int player, int row, int col) {
-        ArrayList<ChessMove> doubleJumps = new ArrayList<ChessMove>();
-        return doubleJumps
-    }
-
-
-    ArrayList<ChessMove> getHelperLegalJumpsFrom(int player, int row, int col) {
-        ArrayList<ChessMove> legalJumps = new ArrayList<ChessMove>();
-        return legalJumps;
-    }
-
-    /**
-     * Return a list of the legal jumps that the specified player can
-     * make starting from the specified row and column. If no such
-     * jumps are possible, null is returned. The logic is similar
-     * to the logic of the getLegalMoves() method.
-     *
-     * Update 03/18: Note that each CheckerMove may contain multiple jumps.
-     * Each move returned in the array represents a sequence of jumps
-     * until no further jump is allowed.
-     *
-     * @param player The player of the current jump, either RED or BLACK.
-     * @param row    row index of the start square.
-     * @param col    col index of the start square.
-     */
-    ChessMove[] getLegalJumpsFrom(int player, int row, int col) {
-        ArrayList<ChessMove> legalJumps = getHelperLegalJumpsFrom(player, row, col);
-        ChessMove[] output = new ChessMove[legalJumps.size()];
-        for (int i = 0; i < legalJumps.size(); i++) {
-            output[i] = legalJumps.get(i);
-        }
-        return output;
-    }
 }

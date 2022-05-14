@@ -25,7 +25,7 @@ public class MonteCarloTreeSearch extends AdversarialSearch {
      *
      * @param legalMoves All the legal moves for the agent at current step.
      */
-    public CheckersMove makeMove(CheckersMove[] legalMoves) {
+    public ChessMove makeMove(ChessMove[] legalMoves) {
         // The checker board state can be obtained from this.board,
         // which is an 2D array of the following integers defined below:
     	// 

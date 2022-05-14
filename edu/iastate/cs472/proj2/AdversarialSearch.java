@@ -10,12 +10,12 @@ package edu.iastate.cs472.proj2;
  * This class is to be extended by the classes AlphaBetaSearch and MonteCarloTreeSearch.
  */
 public abstract class AdversarialSearch {
-    protected CheckersData board;
+    protected ChessData board;
 
-    // An instance of this class will be created in the Checkers.Board
+    // An instance of this class will be created in the Chess.Board
     // It would be better to keep the default constructor.
 
-    protected void setCheckersData(CheckersData board) {
+    protected void setChessData(ChessData board) {
         this.board = board;
     }
     
@@ -23,7 +23,7 @@ public abstract class AdversarialSearch {
      * 
      * @return an array of valid moves
      */
-    protected CheckersMove[] legalMoves() {
+    protected ChessMove[] legalMoves() {
     	// TODO
     	return null; 
     }
@@ -32,7 +32,7 @@ public abstract class AdversarialSearch {
      * Return a move returned from either the alpha-beta search or the Monte Carlo tree search.
      * 
      * @param legalMoves
-     * @return CheckersMove 
+     * @return ChessMove 
      */
-    public abstract CheckersMove makeMove(CheckersMove[] legalMoves);
+    public abstract ChessMove makeMove(ChessMove[] legalMoves);
 }

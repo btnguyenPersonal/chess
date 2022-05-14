@@ -108,8 +108,8 @@ public class Chess extends JPanel {
      * This panel displays a 160-by-160 checkerboard pattern with
      * a 2-pixel black border.  It is assumed that the size of the
      * panel is set to exactly 164-by-164 pixels.  This class does
-     * the work of letting the users play checkers, and it displays
-     * the checkerboard.
+     * the work of letting the users play chess, and it displays
+     * the chessboard.
      */
     public static class PreBoard extends JPanel{
     	ChessData preBoard;
@@ -157,7 +157,7 @@ public class Chess extends JPanel {
             g.setColor(Color.black);
             g.drawRect(0,0,getSize().width-1,getSize().height-1);
             g.drawRect(1,1,getSize().width-3,getSize().height-3);
-            /* Draw the squares of the checkerboard and the checkers. */
+            /* Draw the squares of the chessboard and the chess. */
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
                     if ( row % 2 == col % 2 )
@@ -166,25 +166,13 @@ public class Chess extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (preBoard.pieceAt(row,col)) {
-                        case ChessData.RED:
-                            g.setColor(Color.RED);
+                        case ChessData.WHITE_PAWN:
+                            g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case ChessData.BLACK:
+                        case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            break;
-                        case ChessData.RED_KING:
-                            g.setColor(Color.RED);
-                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
-                            break;
-                        case ChessData.BLACK_KING:
-                            g.setColor(Color.BLACK);
-                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                     }
                 }
@@ -216,7 +204,7 @@ public class Chess extends JPanel {
         //     move, these give the row and column
         //     containing that piece.  If no piece is
         //     yet selected, then selectedRow is -1.
-        ChessData[] legalMoves;  // An array containing the legal moves for the
+        ChessMove[] legalMoves;  // An array containing the legal moves for the
         //   current player.
         AdversarialSearch player_1; // AI player, Alpha-beta
         AdversarialSearch player_2; // MCTS
@@ -300,12 +288,12 @@ public class Chess extends JPanel {
             displayBoard.setUpGame(); // S_R, Set up the pieces.
             agentBoard.setUpGame(); // S_L
             //
-            currentPlayer = ChessData.RED;   // RED moves first.
+            currentPlayer = ChessData.WHITE_PLAYER;
             player_1.setChessData(board);
             player_2.setChessData(board);
-            legalMoves = board.getLegalMoves(ChessData.RED);  // Get RED's legal moves.
+            legalMoves = board.getLegalMoves(ChessData.WHITE_PLAYER);  // Get RED's legal moves.
             selectedRow = -1;   // RED has not yet selected a piece to move.
-            message.setText("Red:  Make your move.");
+            message.setText("White:  Make your move.");
             gameInProgress = true;
             newGameButton.setEnabled(false);
             resignButton.setEnabled(true);
@@ -325,7 +313,7 @@ public class Chess extends JPanel {
                 message.setText("There is no game in progress!");
                 return;
             }
-            if (currentPlayer == ChessData.RED)
+            if (currentPlayer == ChessData.WHITE_PLAYER)
                 gameOver("RED resigns.  BLACK wins.");
             else
                 gameOver("BLACK resigns.  RED wins.");
@@ -364,8 +352,8 @@ public class Chess extends JPanel {
                 if (legalMove.rows.get(0) == row && legalMove.cols.get(0) == col) {
                     selectedRow = row;
                     selectedCol = col;
-                    if (currentPlayer == ChessData.RED)
-                        message.setText("RED:  Make your move.");
+                    if (currentPlayer == ChessData.WHITE_PLAYER)
+                        message.setText("WHITE:  Make your move.");
                     else
                         message.setText("BLACK:  Make your move.");
                     repaint();
@@ -413,11 +401,11 @@ public class Chess extends JPanel {
                 Get that player's legal moves.  If the player has no legal moves,
                 then the game ends. */
             //Play checkers game on agentboard
-            if (currentPlayer == ChessData.RED) {
-                currentPlayer = ChessData.BLACK;
+            if (currentPlayer == ChessData.WHITE_PLAYER) {
+                currentPlayer = ChessData.BLACK_PLAYER;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null) {
-                    gameOver("BLACK has no moves.  RED wins.");
+                    gameOver("BLACK has no moves.  WHITE wins.");
                     displayBoard = copyBoard(board);
                     previous.drawBoard(board, moveAI);
                     repaint();
@@ -453,14 +441,12 @@ public class Chess extends JPanel {
             
             previous.drawBoard(agentBoard, moveAI);
 
-            currentPlayer = ChessData.RED;
+            currentPlayer = ChessData.WHITE_PLAYER;
             legalMoves = board.getLegalMoves(currentPlayer);
             if (legalMoves == null)
-                gameOver("RED has no moves.  BLACK wins.");
-            else if (legalMoves[0].isJump())
-                message.setText("RED:  Make your move.  You must jump.");
+                gameOver("WHITE has no moves.  BLACK wins.");
             else
-                message.setText("RED:  Make your move.");
+                message.setText("WHITE:  Make your move.");
 
             /* Set selectedRow = -1 to record that the player has not yet selected
                a piece to move. */
@@ -508,25 +494,13 @@ public class Chess extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (displayBoard.pieceAt(row,col)) {
-                        case ChessData.RED:
+                        case ChessData.WHITE_PAWN:
                             g.setColor(Color.RED);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             break;
-                        case ChessData.BLACK:
+                        case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            break;
-                        case ChessData.RED_KING:
-                            g.setColor(Color.RED);
-                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
-                            break;
-                        case ChessData.BLACK_KING:
-                            g.setColor(Color.BLACK);
-                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
-                            g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                     }
                 }

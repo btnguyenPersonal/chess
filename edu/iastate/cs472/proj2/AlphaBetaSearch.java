@@ -26,7 +26,7 @@ public class AlphaBetaSearch extends AdversarialSearch {
      *
      * @param legalMoves All the legal moves for the agent at current step.
      */
-    public CheckersMove makeMove(CheckersMove[] legalMoves) {
+    public ChessMove makeMove(ChessMove[] legalMoves) {
         // The checker board state can be obtained from this.board,
         // which is a int 2D array. The numbers in the `board` are
         // defined as
