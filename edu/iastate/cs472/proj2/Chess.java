@@ -169,42 +169,93 @@ public class Chess extends JPanel {
                         case ChessData.WHITE_PAWN:
                             g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_ROOK:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KNIGHT:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_BISHOP:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_QUEEN:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KING:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_ROOK:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KNIGHT:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_BISHOP:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_QUEEN:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KING:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                     }
                 }
             }
             g.setColor(Color.green);
-            //g.drawRect(2 + moveAI.c1 * 20, 2 + moveAI.r1 * 20, 19, 19);
-            g.drawRect(3 + moveAI.c2 * 20, 3 + moveAI.r2 * 20, 17, 17);
+            g.drawRect(2 + moveAI.c1 * 20, 2 + moveAI.r1 * 20, 19, 19);
+            g.drawRect(3 + moveAI.c1 * 20, 3 + moveAI.r1 * 20, 17, 17);
             
         }  // end paintComponent()
     }
     
     private class Board extends JPanel implements ActionListener, MouseListener {
-        ChessData board;  // The data for the checkers board is kept here.
-        //    This board is also responsible for generating
-        //    lists of legal moves.
-        boolean gameInProgress; // Is a game currently in progress?
-        /* The next three variables are valid only when the game is in progress. */
-        int currentPlayer;      // Whose turn is it now?  The possible values
-        //    are ChessData.RED and ChessData.BLACK.
-        int selectedRow, selectedCol;  // If the current player has selected a piece to
-        //     move, these give the row and column
-        //     containing that piece.  If no piece is
-        //     yet selected, then selectedRow is -1.
-        ChessMove[] legalMoves;  // An array containing the legal moves for the
-        //   current player.
+        ChessData board;
+        boolean gameInProgress;
+        int currentPlayer;
+        int selectedRow, selectedCol;
+        ChessMove[] legalMoves;
         AdversarialSearch player_1; // AI player, Alpha-beta
         AdversarialSearch player_2; // MCTS
-        /**
-         * Constructor.  Create the buttons and label.  Listens for mouse
-         * clicks and for clicks on the buttons.  Create the board and
-         * start the first game.
-         */
         ChessData displayBoard;
         ChessData agentBoard;
         
@@ -283,8 +334,8 @@ public class Chess extends JPanel {
             currentPlayer = ChessData.WHITE_PLAYER;
             player_1.setChessData(board);
             player_2.setChessData(board);
-            legalMoves = board.getLegalMoves(ChessData.WHITE_PLAYER);  // Get RED's legal moves.
-            selectedRow = -1;   // RED has not yet selected a piece to move.
+            legalMoves = board.getLegalMoves(ChessData.WHITE_PLAYER);
+            selectedRow = -1;
             message.setText("White:  Make your move.");
             gameInProgress = true;
             newGameButton.setEnabled(false);
@@ -306,9 +357,9 @@ public class Chess extends JPanel {
                 return;
             }
             if (currentPlayer == ChessData.WHITE_PLAYER)
-                gameOver("RED resigns.  BLACK wins.");
+                gameOver("WHITE resigns.  BLACK wins.");
             else
-                gameOver("BLACK resigns.  RED wins.");
+                gameOver("BLACK resigns.  WHITE wins.");
             	//previous.drawBoard();
         }
 
@@ -487,12 +538,76 @@ public class Chess extends JPanel {
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (displayBoard.pieceAt(row,col)) {
                         case ChessData.WHITE_PAWN:
-                            g.setColor(Color.RED);
+                            g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_ROOK:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KNIGHT:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_BISHOP:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_QUEEN:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KING:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_ROOK:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KNIGHT:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_BISHOP:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_QUEEN:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KING:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
                             break;
                     }
                 }
@@ -518,8 +633,8 @@ public class Chess extends JPanel {
                     g.setColor(Color.green);
                     for (ChessMove legalMove : legalMoves) {
                         if (legalMove.c1 == selectedCol && legalMove.r1 == selectedRow) {
-                            //g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
-                            g.drawRect(3 + legalMove.c2 * 20, 3 + legalMove.r2 * 20, 17, 17);
+                            g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
+                            g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
                         }
                     }
                 }

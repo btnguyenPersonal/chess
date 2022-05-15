@@ -3,13 +3,6 @@ package edu.iastate.cs472.proj2;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * An object of this class holds data about a game of checkers.
- * It knows what kind of piece is on each square of the checkerboard.
- * Note that RED moves "up" the board (i.e. row number decreases)
- * while BLACK moves "down" the board (i.e. row number increases).
- * Methods are provided to return lists of available legal moves.
- */
 public class ChessData {
 
     /*
@@ -93,25 +86,34 @@ public class ChessData {
         return sb.toString();
     }
 
-    /**
-     * Set up the board with checkers in position for the beginning
-     * of a game. Note that checkers can only be found in squares
-     * that satisfy row % 2 == col % 2. At the start of the game,
-     * all such squares in the first three rows contain black squares
-     * and all such squares in the last three rows contain red squares.
-     */
     void setUpGame() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 board[row][col] = EMPTY;
             }
         }
+        board[0][0] = BLACK_ROOK;
+        board[0][1] = BLACK_KNIGHT;
+        board[0][2] = BLACK_BISHOP;
+        board[0][3] = BLACK_QUEEN;
+        board[0][4] = BLACK_KING;
+        board[0][5] = BLACK_BISHOP;
+        board[0][6] = BLACK_KNIGHT;
+        board[0][7] = BLACK_ROOK;
         for (int i = 0; i < 8; i++) {
-            board[1][i] = WHITE_PAWN;
+            board[1][i] = BLACK_PAWN;
         }
         for (int i = 0; i < 8; i++) {
-            board[6][i] = BLACK_PAWN;
+            board[6][i] = WHITE_PAWN;
         }
+        board[7][0] = WHITE_ROOK;
+        board[7][1] = WHITE_KNIGHT;
+        board[7][2] = WHITE_BISHOP;
+        board[7][3] = WHITE_QUEEN;
+        board[7][4] = WHITE_KING;
+        board[7][5] = WHITE_BISHOP;
+        board[7][6] = WHITE_KNIGHT;
+        board[7][7] = WHITE_ROOK;
     }
 
     /**
@@ -146,7 +148,7 @@ public class ChessData {
     ChessMove[] getLegalMoves(int player) {
         // TODO
         ArrayList<ChessMove> legalMoves = new ArrayList<ChessMove>();
-        ChessMove[] output = new ChessMove[10];
+        ChessMove[] output = new ChessMove[1];
         output[0] = new ChessMove(0, 0, 1, 1);
         return output;
     }
