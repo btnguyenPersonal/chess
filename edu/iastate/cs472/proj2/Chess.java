@@ -177,17 +177,9 @@ public class Chess extends JPanel {
                     }
                 }
             }
-            
-            // paint AI move on the left board
-            if(moveAI.rows.size() > 0)
-            {
-            	g.setColor(Color.green);
-            	for(int i = 0; i < moveAI.rows.size(); i++)
-            	{
-            		g.drawRect(2 + moveAI.cols.get(i) * 20, 2 + moveAI.rows.get(i) * 20, 19, 19);
-                    g.drawRect(3 + moveAI.cols.get(i) * 20, 3 + moveAI.rows.get(i) * 20, 17, 17);
-            	}
-            }
+            g.setColor(Color.green);
+            //g.drawRect(2 + moveAI.c1 * 20, 2 + moveAI.r1 * 20, 19, 19);
+            g.drawRect(3 + moveAI.c2 * 20, 3 + moveAI.r2 * 20, 17, 17);
             
         }  // end paintComponent()
     }
@@ -349,7 +341,7 @@ public class Chess extends JPanel {
                might change a previous selection.)  Reset the message, in
                case it was previously displaying an error message. */
             for (ChessMove legalMove : legalMoves) {
-                if (legalMove.rows.get(0) == row && legalMove.cols.get(0) == col) {
+                if (legalMove.r1 == row && legalMove.c1 == col) {
                     selectedRow = row;
                     selectedCol = col;
                     if (currentPlayer == ChessData.WHITE_PLAYER)
@@ -371,8 +363,8 @@ public class Chess extends JPanel {
             /* If the user clicked on a square where the selected piece can be
                legally moved, then make the move and return. */
             for (ChessMove legalMove : legalMoves) {
-                if (legalMove.rows.get(0) == selectedRow && legalMove.cols.get(0) == selectedCol
-                        && legalMove.rows.get(legalMove.rows.size()-1) == row && legalMove.cols.get(legalMove.cols.size()-1) == col) {
+                if (legalMove.r1 == selectedRow && legalMove.c1 == selectedCol
+                        && legalMove.r2 == row && legalMove.c2 == col) {
                     doMakeMove(legalMove);
                     return;
                 }
@@ -458,14 +450,14 @@ public class Chess extends JPanel {
             if (legalMoves != null) {
                 boolean sameStartSquare = true;
                 for (int i = 1; i < legalMoves.length; i++)
-                    if (legalMoves[i].rows.get(0) != legalMoves[0].rows.get(0)
-                            || legalMoves[i].cols.get(0) != legalMoves[0].cols.get(0)) {
+                    if (legalMoves[i].r1 != legalMoves[0].r1
+                            || legalMoves[i].c1 != legalMoves[0].c1) {
                         sameStartSquare = false;
                         break;
                     }
                 if (sameStartSquare) {
-                    selectedRow = legalMoves[0].rows.get(0);
-                    selectedCol = legalMoves[0].cols.get(0);
+                    selectedRow = legalMoves[0].r1;
+                    selectedCol = legalMoves[0].c1;
                 }
             }
 
@@ -513,8 +505,8 @@ public class Chess extends JPanel {
                 /* First, draw a 2-pixel cyan border around the pieces that can be moved. */
                 g.setColor(Color.cyan);
                 for (ChessMove legalMove : legalMoves) {
-                    g.drawRect(2 + legalMove.cols.get(0) * 20, 2 + legalMove.rows.get(0) * 20, 19, 19);
-                    g.drawRect(3 + legalMove.cols.get(0) * 20, 3 + legalMove.rows.get(0) * 20, 17, 17);
+                    g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
+                    g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
                 }
                /* If a piece is selected for moving (i.e. if selectedRow >= 0), then
                 draw a 2-pixel white border around that piece and draw green borders
@@ -525,15 +517,9 @@ public class Chess extends JPanel {
                     g.drawRect(3 + selectedCol*20, 3 + selectedRow*20, 17, 17);
                     g.setColor(Color.green);
                     for (ChessMove legalMove : legalMoves) {
-                        if (legalMove.cols.get(0) == selectedCol && legalMove.rows.get(0) == selectedRow) {
-                            //g.drawRect(2 + legalMove.toCol * 20, 2 + legalMove.toRow * 20, 19, 19);
-                            //g.drawRect(3 + legalMove.toCol * 20, 3 + legalMove.toRow * 20, 17, 17);
-                        	for(int i = 1; i < legalMove.rows.size(); i++ )
-                        	{
-                        		g.drawRect(2 + legalMove.cols.get(i) * 20, 2 + legalMove.rows.get(i) * 20, 19, 19);
-                                g.drawRect(3 + legalMove.cols.get(i) * 20, 3 + legalMove.rows.get(i) * 20, 17, 17);
-                        	}
-                        	
+                        if (legalMove.c1 == selectedCol && legalMove.r1 == selectedRow) {
+                            //g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
+                            g.drawRect(3 + legalMove.c2 * 20, 3 + legalMove.r2 * 20, 17, 17);
                         }
                     }
                 }

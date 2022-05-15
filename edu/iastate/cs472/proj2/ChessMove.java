@@ -11,62 +11,26 @@ import java.util.ArrayList;
  */
 public class ChessMove {
     
-    ArrayList<Integer> rows = new ArrayList<Integer>();
-    ArrayList<Integer> cols = new ArrayList<Integer>();
+    public int r1;
+    public int c1;
+    public int r2;
+    public int c2;
     
     ChessMove(int r1, int c1, int r2, int c2) {
-        // Constructor, a single move from
-        //(r1, c1) to (r2, c2)
-        
-        // move's start
-        rows.add(r1);
-        cols.add(c1);
-        
-        // move's destination
-        rows.add(r2);
-        cols.add(c2);
+        this.r1 = r1;
+        this.c1 = c1;
+        this.r2 = r2;
+        this.c2 = c2;
     }
     
     ChessMove() {
-        // Constructor, create an empty move
     }
 
-    int getLastCol() {
-        return cols.get(cols.size() - 1);
-    }
-
-    int getLastRow() {
-        return rows.get(rows.size() - 1);
-    }
-    
-    boolean isJump() {
-        // Test whether this move is a jump.  It is assumed that
-        // the move is legal.  In a jump, the piece moves two
-        // rows.  (In a regular move, it only moves one row.)
-        return (rows.get(0) - rows.get(1) == 2 || rows.get(0) - rows.get(1) == -2);
-    }
-    
-    
-    void addMove(int r, int c){
-        // add another move (continuous jump), which goes from
-        // (last ele in rows, last ele in cols) to (r, c)
-        rows.add(r);
-        cols.add(c);
-    }
-    
-    //get a copy of this move
     @Override
     public ChessMove clone() {
-        ChessMove move = new ChessMove();
-        
-        move.rows.addAll(this.rows);
-        move.cols.addAll(this.cols);
-        
-        return move;
-        
+        return new ChessMove(r1, c1, r2, c2);
     }
 
-    //get a copy of this move
     @Override
     public String toString() {
         return getCoors();
@@ -74,10 +38,10 @@ public class ChessMove {
 
     public String getCoors() {
         String output = "\nMove:\n";
-        for (int i = 0; i < rows.size(); i++) {
-            output += "    (" + rows.get(i) + ", " + cols.get(i) + ")";
-            output += "\n";
-        }
+        output += "    (" + r1 + ", " + c1 + ")";
+        output += "\n";
+        output += "    (" + r2 + ", " + c2 + ")";
+        output += "\n";
         return output;
     }
 

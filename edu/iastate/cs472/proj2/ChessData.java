@@ -146,7 +146,8 @@ public class ChessData {
     ChessMove[] getLegalMoves(int player) {
         // TODO
         ArrayList<ChessMove> legalMoves = new ArrayList<ChessMove>();
-        ChessMove[] output = new ChessMove[1];
+        ChessMove[] output = new ChessMove[10];
+        output[0] = new ChessMove(0, 0, 1, 1);
         return output;
     }
 
