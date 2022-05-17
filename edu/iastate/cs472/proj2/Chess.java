@@ -108,8 +108,8 @@ public class Chess extends JPanel {
      * This panel displays a 160-by-160 checkerboard pattern with
      * a 2-pixel black border.  It is assumed that the size of the
      * panel is set to exactly 164-by-164 pixels.  This class does
-     * the work of letting the users play checkers, and it displays
-     * the checkerboard.
+     * the work of letting the users play chess, and it displays
+     * the chessboard.
      */
     public static class PreBoard extends JPanel{
     	ChessData preBoard;
@@ -157,7 +157,7 @@ public class Chess extends JPanel {
             g.setColor(Color.black);
             g.drawRect(0,0,getSize().width-1,getSize().height-1);
             g.drawRect(1,1,getSize().width-3,getSize().height-3);
-            /* Draw the squares of the checkerboard and the checkers. */
+            /* Draw the squares of the chessboard and the chess. */
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
                     if ( row % 2 == col % 2 )
@@ -166,19 +166,71 @@ public class Chess extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (preBoard.pieceAt(row,col)) {
-                        case ChessData.RED:
-                            g.setColor(Color.RED);
+                        case ChessData.WHITE_PAWN:
+                            g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
                             break;
-                        case ChessData.BLACK:
+                        case ChessData.WHITE_ROOK:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KNIGHT:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_BISHOP:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_QUEEN:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KING:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
                             break;
-                        case ChessData.RED_KING:
-                            g.setColor(Color.RED);
+                        case ChessData.BLACK_ROOK:
+                            g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KNIGHT:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_BISHOP:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_QUEEN:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.BLACK_KING:
                             g.setColor(Color.BLACK);
@@ -189,42 +241,21 @@ public class Chess extends JPanel {
                     }
                 }
             }
-            
-            // paint AI move on the left board
-            if(moveAI.rows.size() > 0)
-            {
-            	g.setColor(Color.green);
-            	for(int i = 0; i < moveAI.rows.size(); i++)
-            	{
-            		g.drawRect(2 + moveAI.cols.get(i) * 20, 2 + moveAI.rows.get(i) * 20, 19, 19);
-                    g.drawRect(3 + moveAI.cols.get(i) * 20, 3 + moveAI.rows.get(i) * 20, 17, 17);
-            	}
-            }
+            g.setColor(Color.green);
+            g.drawRect(2 + moveAI.c1 * 20, 2 + moveAI.r1 * 20, 19, 19);
+            g.drawRect(3 + moveAI.c1 * 20, 3 + moveAI.r1 * 20, 17, 17);
             
         }  // end paintComponent()
     }
     
     private class Board extends JPanel implements ActionListener, MouseListener {
-        ChessData board;  // The data for the checkers board is kept here.
-        //    This board is also responsible for generating
-        //    lists of legal moves.
-        boolean gameInProgress; // Is a game currently in progress?
-        /* The next three variables are valid only when the game is in progress. */
-        int currentPlayer;      // Whose turn is it now?  The possible values
-        //    are ChessData.RED and ChessData.BLACK.
-        int selectedRow, selectedCol;  // If the current player has selected a piece to
-        //     move, these give the row and column
-        //     containing that piece.  If no piece is
-        //     yet selected, then selectedRow is -1.
-        ChessData[] legalMoves;  // An array containing the legal moves for the
-        //   current player.
+        ChessData board;
+        boolean gameInProgress;
+        int currentPlayer;
+        int selectedRow, selectedCol;
+        ChessMove[] legalMoves;
         AdversarialSearch player_1; // AI player, Alpha-beta
         AdversarialSearch player_2; // MCTS
-        /**
-         * Constructor.  Create the buttons and label.  Listens for mouse
-         * clicks and for clicks on the buttons.  Create the board and
-         * start the first game.
-         */
         ChessData displayBoard;
         ChessData agentBoard;
         
@@ -300,12 +331,12 @@ public class Chess extends JPanel {
             displayBoard.setUpGame(); // S_R, Set up the pieces.
             agentBoard.setUpGame(); // S_L
             //
-            currentPlayer = ChessData.RED;   // RED moves first.
+            currentPlayer = ChessData.WHITE_PLAYER;
             player_1.setChessData(board);
             player_2.setChessData(board);
-            legalMoves = board.getLegalMoves(ChessData.RED);  // Get RED's legal moves.
-            selectedRow = -1;   // RED has not yet selected a piece to move.
-            message.setText("Red:  Make your move.");
+            legalMoves = board.getLegalMoves(ChessData.WHITE_PLAYER);
+            selectedRow = -1;
+            message.setText("White:  Make your move.");
             gameInProgress = true;
             newGameButton.setEnabled(false);
             resignButton.setEnabled(true);
@@ -325,10 +356,10 @@ public class Chess extends JPanel {
                 message.setText("There is no game in progress!");
                 return;
             }
-            if (currentPlayer == ChessData.RED)
-                gameOver("RED resigns.  BLACK wins.");
+            if (currentPlayer == ChessData.WHITE_PLAYER)
+                gameOver("WHITE resigns.  BLACK wins.");
             else
-                gameOver("BLACK resigns.  RED wins.");
+                gameOver("BLACK resigns.  WHITE wins.");
             	//previous.drawBoard();
         }
 
@@ -361,11 +392,11 @@ public class Chess extends JPanel {
                might change a previous selection.)  Reset the message, in
                case it was previously displaying an error message. */
             for (ChessMove legalMove : legalMoves) {
-                if (legalMove.rows.get(0) == row && legalMove.cols.get(0) == col) {
+                if (legalMove.r1 == row && legalMove.c1 == col) {
                     selectedRow = row;
                     selectedCol = col;
-                    if (currentPlayer == ChessData.RED)
-                        message.setText("RED:  Make your move.");
+                    if (currentPlayer == ChessData.WHITE_PLAYER)
+                        message.setText("WHITE:  Make your move.");
                     else
                         message.setText("BLACK:  Make your move.");
                     repaint();
@@ -383,8 +414,8 @@ public class Chess extends JPanel {
             /* If the user clicked on a square where the selected piece can be
                legally moved, then make the move and return. */
             for (ChessMove legalMove : legalMoves) {
-                if (legalMove.rows.get(0) == selectedRow && legalMove.cols.get(0) == selectedCol
-                        && legalMove.rows.get(legalMove.rows.size()-1) == row && legalMove.cols.get(legalMove.cols.size()-1) == col) {
+                if (legalMove.r1 == selectedRow && legalMove.c1 == selectedCol
+                        && legalMove.r2 == row && legalMove.c2 == col) {
                     doMakeMove(legalMove);
                     return;
                 }
@@ -413,11 +444,11 @@ public class Chess extends JPanel {
                 Get that player's legal moves.  If the player has no legal moves,
                 then the game ends. */
             //Play checkers game on agentboard
-            if (currentPlayer == ChessData.RED) {
-                currentPlayer = ChessData.BLACK;
+            if (currentPlayer == ChessData.WHITE_PLAYER) {
+                currentPlayer = ChessData.BLACK_PLAYER;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null) {
-                    gameOver("BLACK has no moves.  RED wins.");
+                    gameOver("BLACK has no moves.  WHITE wins.");
                     displayBoard = copyBoard(board);
                     previous.drawBoard(board, moveAI);
                     repaint();
@@ -453,14 +484,12 @@ public class Chess extends JPanel {
             
             previous.drawBoard(agentBoard, moveAI);
 
-            currentPlayer = ChessData.RED;
+            currentPlayer = ChessData.WHITE_PLAYER;
             legalMoves = board.getLegalMoves(currentPlayer);
             if (legalMoves == null)
-                gameOver("RED has no moves.  BLACK wins.");
-            else if (legalMoves[0].isJump())
-                message.setText("RED:  Make your move.  You must jump.");
+                gameOver("WHITE has no moves.  BLACK wins.");
             else
-                message.setText("RED:  Make your move.");
+                message.setText("WHITE:  Make your move.");
 
             /* Set selectedRow = -1 to record that the player has not yet selected
                a piece to move. */
@@ -472,14 +501,14 @@ public class Chess extends JPanel {
             if (legalMoves != null) {
                 boolean sameStartSquare = true;
                 for (int i = 1; i < legalMoves.length; i++)
-                    if (legalMoves[i].rows.get(0) != legalMoves[0].rows.get(0)
-                            || legalMoves[i].cols.get(0) != legalMoves[0].cols.get(0)) {
+                    if (legalMoves[i].r1 != legalMoves[0].r1
+                            || legalMoves[i].c1 != legalMoves[0].c1) {
                         sameStartSquare = false;
                         break;
                     }
                 if (sameStartSquare) {
-                    selectedRow = legalMoves[0].rows.get(0);
-                    selectedCol = legalMoves[0].cols.get(0);
+                    selectedRow = legalMoves[0].r1;
+                    selectedCol = legalMoves[0].c1;
                 }
             }
 
@@ -508,19 +537,71 @@ public class Chess extends JPanel {
                         g.setColor(Color.GRAY);
                     g.fillRect(2 + col*20, 2 + row*20, 20, 20);
                     switch (displayBoard.pieceAt(row,col)) {
-                        case ChessData.RED:
-                            g.setColor(Color.RED);
+                        case ChessData.WHITE_PAWN:
+                            g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
                             break;
-                        case ChessData.BLACK:
+                        case ChessData.WHITE_ROOK:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KNIGHT:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_BISHOP:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_QUEEN:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.WHITE_KING:
+                            g.setColor(Color.WHITE);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.BLACK);
+                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_PAWN:
                             g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("P", 7 + col*20, 16 + row*20);
                             break;
-                        case ChessData.RED_KING:
-                            g.setColor(Color.RED);
+                        case ChessData.BLACK_ROOK:
+                            g.setColor(Color.BLACK);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.WHITE);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("R", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_KNIGHT:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_BISHOP:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("B", 7 + col*20, 16 + row*20);
+                            break;
+                        case ChessData.BLACK_QUEEN:
+                            g.setColor(Color.BLACK);
+                            g.fillOval(4 + col*20, 4 + row*20, 15, 15);
+                            g.setColor(Color.WHITE);
+                            g.drawString("Q", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.BLACK_KING:
                             g.setColor(Color.BLACK);
@@ -539,8 +620,8 @@ public class Chess extends JPanel {
                 /* First, draw a 2-pixel cyan border around the pieces that can be moved. */
                 g.setColor(Color.cyan);
                 for (ChessMove legalMove : legalMoves) {
-                    g.drawRect(2 + legalMove.cols.get(0) * 20, 2 + legalMove.rows.get(0) * 20, 19, 19);
-                    g.drawRect(3 + legalMove.cols.get(0) * 20, 3 + legalMove.rows.get(0) * 20, 17, 17);
+                    g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
+                    g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
                 }
                /* If a piece is selected for moving (i.e. if selectedRow >= 0), then
                 draw a 2-pixel white border around that piece and draw green borders
@@ -551,15 +632,9 @@ public class Chess extends JPanel {
                     g.drawRect(3 + selectedCol*20, 3 + selectedRow*20, 17, 17);
                     g.setColor(Color.green);
                     for (ChessMove legalMove : legalMoves) {
-                        if (legalMove.cols.get(0) == selectedCol && legalMove.rows.get(0) == selectedRow) {
-                            //g.drawRect(2 + legalMove.toCol * 20, 2 + legalMove.toRow * 20, 19, 19);
-                            //g.drawRect(3 + legalMove.toCol * 20, 3 + legalMove.toRow * 20, 17, 17);
-                        	for(int i = 1; i < legalMove.rows.size(); i++ )
-                        	{
-                        		g.drawRect(2 + legalMove.cols.get(i) * 20, 2 + legalMove.rows.get(i) * 20, 19, 19);
-                                g.drawRect(3 + legalMove.cols.get(i) * 20, 3 + legalMove.rows.get(i) * 20, 17, 17);
-                        	}
-                        	
+                        if (legalMove.c1 == selectedCol && legalMove.r1 == selectedRow) {
+                            g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
+                            g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
                         }
                     }
                 }

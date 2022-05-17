@@ -1,2 +1,5 @@
 **/*.class
+/out
 tags
+/.idea
+chess.iml
