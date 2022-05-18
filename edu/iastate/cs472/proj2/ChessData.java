@@ -183,7 +183,6 @@ public class ChessData {
         for (ChessMove move : input) {
             ChessData temp = new ChessData(startBoard);
             temp.makeMove(move);
-            System.out.println(temp);
             if (!kingInCheck(temp, player)) {
                 output.add(move);
             }
@@ -543,6 +542,43 @@ public class ChessData {
             return true;
         }
         return false;
+    }
+
+    public boolean isTwoKings() {
+        int n;
+        double w = 0;
+        double b = 0;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                n = pieceAt(row, col);
+                if (n == WHITE_PAWN) {
+                    w++;
+                } else if (n == WHITE_ROOK) {
+                    w += 5;
+                } else if (n == WHITE_KNIGHT) {
+                    w += 3;
+                } else if (n == WHITE_BISHOP) {
+                    w += 3;
+                } else if (n == WHITE_QUEEN) {
+                    w += 9;
+                } else if (n == WHITE_KING) {
+                    w += 1000;
+                } else if (n == BLACK_PAWN) {
+                    b++;
+                } else if (n == BLACK_ROOK) {
+                    b += 5;
+                } else if (n == BLACK_KNIGHT) {
+                    b += 3;
+                } else if (n == BLACK_BISHOP) {
+                    b += 3;
+                } else if (n == BLACK_QUEEN) {
+                    b += 9;
+                } else if (n == BLACK_KING) {
+                    b += 1000;
+                }
+            }
+        }
+        return w == 1000 && b == 1000;
     }
 
     public double getEvaluation(int player) {
