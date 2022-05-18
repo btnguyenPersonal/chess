@@ -433,6 +433,7 @@ public class ChessData {
     }
 
     private boolean canMove(int row1, int col1, int row2, int col2, int player) {
+        // TODO need to add not unprotecting the king from getting taken
         return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), swapPlayer(player)));
     }
 
@@ -467,5 +468,43 @@ public class ChessData {
             return true;
         }
         return false;
+    }
+
+    public double getEvaluation() {
+        // TODO add stalemate and checkmate
+        int n;
+        double w = 0;
+        double b = 0;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                n = pieceAt(row, col);
+                if (n == WHITE_PAWN) {
+                    w++;
+                } else if (n == WHITE_ROOK) {
+                    w += 5;
+                } else if (n == WHITE_KNIGHT) {
+                    w += 3;
+                } else if (n == WHITE_BISHOP) {
+                    w += 3;
+                } else if (n == WHITE_QUEEN) {
+                    w += 9;
+                } else if (n == WHITE_KING) {
+                    w += 1000;
+                } else if (n == BLACK_PAWN) {
+                    b++;
+                } else if (n == BLACK_ROOK) {
+                    b += 5;
+                } else if (n == BLACK_KNIGHT) {
+                    b += 3;
+                } else if (n == BLACK_BISHOP) {
+                    b += 3;
+                } else if (n == BLACK_QUEEN) {
+                    b += 9;
+                } else if (n == BLACK_KING) {
+                    b += 1000;
+                }
+            }
+        }
+        return w - b;
     }
 }
