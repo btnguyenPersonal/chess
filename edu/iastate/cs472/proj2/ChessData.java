@@ -191,7 +191,8 @@ public class ChessData {
         return output;
     }
 
-    private boolean kingInCheck(ChessData temp, int player) {
+    private boolean kingInCheck(ChessData startBoard, int player) {
+        ChessData temp = new ChessData(startBoard);
         boolean kingInCheck = false;
         ChessMove[] counterMoves = temp.getLegalMovesUnsafe(swapPlayer(player));
         for (ChessMove tempMove : counterMoves) {
