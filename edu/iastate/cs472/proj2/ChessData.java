@@ -86,7 +86,7 @@ public class ChessData {
         return sb.toString();
     }
 
-    void setUpGame() {
+    public void setUpGame() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 board[row][col] = EMPTY;
@@ -116,11 +116,11 @@ public class ChessData {
         board[7][7] = WHITE_ROOK;
     }
 
-    int pieceAt(int row, int col) {
+    public int pieceAt(int row, int col) {
         return board[row][col];
     }
 
-    void setPiece(int row, int col, int piece) {
+    private void setPiece(int row, int col, int piece) {
         if ((piece == WHITE_PAWN && row == 0) || (piece == BLACK_PAWN && row == 7)) {
             board[row][col] = (piece == WHITE_PAWN ? WHITE_QUEEN : BLACK_QUEEN);
         } else {
@@ -128,16 +128,16 @@ public class ChessData {
         }
     }
 
-    void makeMove(ChessMove move) {
+    public void makeMove(ChessMove move) {
         makeMove(move.r1, move.c1, move.r2, move.c2);
     }
 
-    void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
+    public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
         setPiece(toRow, toCol, pieceAt(fromRow, fromCol));
         setPiece(fromRow, fromCol, EMPTY);
     }
 
-    ChessMove[] getLegalMoves(int player) {
+    public ChessMove[] getLegalMoves(int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         ChessMove[] temp;
         for (int row = 0; row < 8; row++) {
@@ -151,7 +151,7 @@ public class ChessData {
         return convertToArray(output);
     }
 
-    ChessMove[] convertToArray(ArrayList<ChessMove> output) {
+    private ChessMove[] convertToArray(ArrayList<ChessMove> output) {
         ChessMove[] legalMoves = new ChessMove[output.size()];
         for (int i = 0; i < output.size(); i++) {
             legalMoves[i] = output.get(i);
@@ -159,7 +159,7 @@ public class ChessData {
         return legalMoves;
     }
 
-    ChessMove[] getLegalMovesSingle(int row, int col, int player) {
+    private ChessMove[] getLegalMovesSingle(int row, int col, int player) {
         if (player == WHITE_PLAYER && !isEmpty(pieceAt(row, col))) {
             switch (pieceAt(row, col)) {
                 case WHITE_PAWN:
@@ -194,7 +194,7 @@ public class ChessData {
         return new ChessMove[0];
     }
 
-    ChessMove[] getPawnMoves(int row, int col, int player) {
+    private ChessMove[] getPawnMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         if (player == WHITE_PLAYER) {
             if (row == 6 && canMove(row, col, row - 2, col, player) && isEmpty(row - 1, col) && isEmpty(row - 2, col)) {
@@ -226,48 +226,88 @@ public class ChessData {
         return convertToArray(output);
     }
 
-    ChessMove[] getRookMoves(int row, int col, int player) {
+    private ChessMove[] getRookMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col) || !canMove(row, col, row + i, col, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col, player) && !isEmpty(row + i, col)) {
+                output.add(new ChessMove(row, col, row + i, col));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col) || !canMove(row, col, row - i, col, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col, player) && !isEmpty(row - i, col)) {
+                output.add(new ChessMove(row, col, row - i, col));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row, col + i) || !canMove(row, col, row, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row, col + i, player) && !isEmpty(row, col + i)) {
+                output.add(new ChessMove(row, col, row, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row, col + i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row, col - i) || !canMove(row, col, row, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row, col - i, player) && !isEmpty(row, col - i)) {
+                output.add(new ChessMove(row, col, row, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row, col - i));
+            }
+        }
+        return convertToArray(output);
+    }
+
+    private ChessMove[] getKnightMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         return convertToArray(output);
     }
 
-    ChessMove[] getKnightMoves(int row, int col, int player) {
+    private ChessMove[] getBishopMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         return convertToArray(output);
     }
 
-    ChessMove[] getBishopMoves(int row, int col, int player) {
+    private ChessMove[] getKingMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         return convertToArray(output);
     }
 
-    ChessMove[] getKingMoves(int row, int col, int player) {
+    private ChessMove[] getQueenMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         return convertToArray(output);
     }
 
-    ChessMove[] getQueenMoves(int row, int col, int player) {
-        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
-        return convertToArray(output);
-    }
-
-    int swapPlayer(int player) {
+    private int swapPlayer(int player) {
         return player == WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
     }
 
-    boolean canMove(int row1, int col1, int row2, int col2, int player) {
+    private boolean canMove(int row1, int col1, int row2, int col2, int player) {
         return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), swapPlayer(player)));
     }
 
-    boolean isEmpty(int piece) {
+    private boolean isEmpty(int piece) {
         return piece == EMPTY;
     }
 
-    boolean isEmpty(int row, int col) {
+    private boolean isEmpty(int row, int col) {
         return !isOutOfBounds(row, col) && isEmpty(pieceAt(row, col));
     }
 
-    boolean isPlayer(int piece, int player) {
+    private boolean isPlayer(int piece, int player) {
         if (player == WHITE_PLAYER) {
             return piece == WHITE_PAWN
                 || piece == WHITE_ROOK
@@ -285,15 +325,10 @@ public class ChessData {
         }
     }
 
-    boolean isOutOfBounds(int row, int col) {
+    private boolean isOutOfBounds(int row, int col) {
         if (row < 0 || row > 7 || col < 0 || col > 7) {
             return true;
         }
         return false;
     }
-
-    boolean checkIf(int row, int col, int piece) {
-        return !isOutOfBounds(row, col) && board[row][col] == piece;
-    }
-
 }
