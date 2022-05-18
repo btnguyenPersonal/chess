@@ -15,6 +15,9 @@ public class ChessMove {
     public int c1;
     public int r2;
     public int c2;
+
+    public boolean isEnPassant = false;
+    public boolean doubleMove = false;
     
     ChessMove(int r1, int c1, int r2, int c2) {
         this.r1 = r1;
@@ -26,6 +29,14 @@ public class ChessMove {
     ChessMove() {
     }
 
+    public boolean isEnPassant() {
+        return isEnPassant;
+    }
+
+    public void setEnPassant() {
+        isEnPassant = true;
+    }
+
     @Override
     public ChessMove clone() {
         return new ChessMove(r1, c1, r2, c2);
@@ -35,6 +46,7 @@ public class ChessMove {
     public String toString() {
         return getCoors();
     }
+
 
     public String convert(int input) {
         switch (input) {
