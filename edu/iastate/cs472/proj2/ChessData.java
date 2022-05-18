@@ -288,6 +288,46 @@ public class ChessData {
 
     private ChessMove[] getBishopMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col - i) || !canMove(row, col, row + i, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col - i, player) && !isEmpty(row + i, col - i)) {
+                output.add(new ChessMove(row, col, row + i, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col - i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col - i) || !canMove(row, col, row - i, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col - i, player) && !isEmpty(row - i, col - i)) {
+                output.add(new ChessMove(row, col, row - i, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col - i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col + i) || !canMove(row, col, row + i, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col + i, player) && !isEmpty(row + i, col + i)) {
+                output.add(new ChessMove(row, col, row + i, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col + i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col + i) || !canMove(row, col, row - i, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col + i, player) && !isEmpty(row - i, col + i)) {
+                output.add(new ChessMove(row, col, row - i, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col + i));
+            }
+        }
         return convertToArray(output);
     }
 
