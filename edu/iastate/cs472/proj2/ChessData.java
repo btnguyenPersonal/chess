@@ -137,6 +137,13 @@ public class ChessData {
         board[7][5] = WHITE_BISHOP;
         board[7][6] = WHITE_KNIGHT;
         board[7][7] = WHITE_ROOK;
+        ChessMove lastMove = null;
+        whiteKingHasMoved = false;
+        whiteRookLeftHasMoved = false;
+        whiteRookRightHasMoved = false;
+        blackKingHasMoved = false;
+        blackRookLeftHasMoved = false;
+        blackRookRightHasMoved = false;
     }
 
     public int pieceAt(int row, int col) {
@@ -172,6 +179,30 @@ public class ChessData {
         }
         lastMove = move;
         makeMove(move.r1, move.c1, move.r2, move.c2, move.isEnPassant());
+        if (board[move.r2][move.c2] == BLACK_KING && move.c2 - move.c1 == -2) {
+            blackKingHasMoved = true;
+            blackRookLeftHasMoved = true;
+            setPiece(0, 3, BLACK_ROOK);
+            setPiece(0, 0, EMPTY);
+        }
+        if (board[move.r2][move.c2] == BLACK_KING && move.c2 - move.c1 == 2) {
+            blackKingHasMoved = true;
+            blackRookRightHasMoved = true;
+            setPiece(0, 5, BLACK_ROOK);
+            setPiece(0, 7, EMPTY);
+        }
+        if (board[move.r2][move.c2] == WHITE_KING && move.c2 - move.c1 == -2) {
+            whiteKingHasMoved = true;
+            whiteRookLeftHasMoved = true;
+            setPiece(7, 3, WHITE_ROOK);
+            setPiece(7, 0, EMPTY);
+        }
+        if (board[move.r2][move.c2] == WHITE_KING && move.c2 - move.c1 == 2) {
+            whiteKingHasMoved = true;
+            whiteRookRightHasMoved = true;
+            setPiece(7, 5, WHITE_ROOK);
+            setPiece(7, 7, EMPTY);
+        }
     }
 
     private void makeMove(int fromRow, int fromCol, int toRow, int toCol, boolean isEnPassant) {
