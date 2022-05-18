@@ -448,7 +448,11 @@ public class Chess extends JPanel {
                 currentPlayer = ChessData.BLACK_PLAYER;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null) {
-                    gameOver("BLACK has no moves.  WHITE wins.");
+                    if (board.getEvaluation(currentPlayer) == 0) {
+                        gameOver("Stalemate. Draw");
+                    } else {
+                        gameOver("BLACK has no moves.  WHITE wins.");
+                    }
                     displayBoard = copyBoard(board);
                     previous.drawBoard(board, moveAI);
                     repaint();
@@ -486,10 +490,15 @@ public class Chess extends JPanel {
 
             currentPlayer = ChessData.WHITE_PLAYER;
             legalMoves = board.getLegalMoves(currentPlayer);
-            if (legalMoves == null)
-                gameOver("WHITE has no moves.  BLACK wins.");
-            else
+            if (legalMoves == null) {
+                if (board.getEvaluation(currentPlayer) == 0) {
+                    gameOver("Stalemate. Draw");
+                } else {
+                    gameOver("WHITE has no moves.  BLACK wins.");
+                }
+            } else {
                 message.setText("WHITE:  Make your move.");
+            }
 
             /* Set selectedRow = -1 to record that the player has not yet selected
                a piece to move. */

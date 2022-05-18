@@ -38,6 +38,15 @@ public class ChessData {
         setUpGame();
     }
 
+    ChessData(ChessData input) {
+        board = new int[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.board[i][j] = input.board[i][j];
+            }
+        }
+    }
+
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_YELLOW = "\u001B[33m";
@@ -148,7 +157,50 @@ public class ChessData {
                 }
             }
         }
+        output = filterInvalidMoves(this, output, player);
+        if (output.size() == 0) {
+            return null;
+        }
         return convertToArray(output);
+    }
+
+    public ChessMove[] getLegalMovesUnsafe(int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        ChessMove[] temp;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                temp = getLegalMovesSingle(row, col, player);
+                for (int i = 0; i < temp.length; i++) {
+                    output.add(temp[i]);
+                }
+            }
+        }
+        return convertToArray(output);
+    }
+
+    private ArrayList<ChessMove> filterInvalidMoves(ChessData startBoard, ArrayList<ChessMove> input, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (ChessMove move : input) {
+            ChessData temp = new ChessData(startBoard);
+            temp.makeMove(move);
+            System.out.println(temp);
+            if (!kingInCheck(temp, player)) {
+                output.add(move);
+            }
+        }
+        return output;
+    }
+
+    private boolean kingInCheck(ChessData temp, int player) {
+        boolean kingInCheck = false;
+        ChessMove[] counterMoves = temp.getLegalMovesUnsafe(swapPlayer(player));
+        for (ChessMove tempMove : counterMoves) {
+            temp.makeMove(tempMove);
+            if (temp.getKingRow(player) == -1) {
+                kingInCheck = true;
+            }
+        }
+        return kingInCheck;
     }
 
     private ChessMove[] convertToArray(ArrayList<ChessMove> output) {
@@ -463,6 +515,28 @@ public class ChessData {
         }
     }
 
+    private int getKingCol(int player) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if ((pieceAt(row, col) == WHITE_KING && player == WHITE_PLAYER) || (pieceAt(row, col) == BLACK_KING && player == BLACK_PLAYER)) {
+                    return col;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int getKingRow(int player) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if ((pieceAt(row, col) == WHITE_KING && player == WHITE_PLAYER) || (pieceAt(row, col) == BLACK_KING && player == BLACK_PLAYER)) {
+                    return row;
+                }
+            }
+        }
+        return -1;
+    }
+
     private boolean isOutOfBounds(int row, int col) {
         if (row < 0 || row > 7 || col < 0 || col > 7) {
             return true;
@@ -470,8 +544,14 @@ public class ChessData {
         return false;
     }
 
-    public double getEvaluation() {
-        // TODO add stalemate and checkmate
+    public double getEvaluation(int player) {
+        if (getLegalMoves(player) == null) {
+            if (kingInCheck(this, player)) {
+                return player == WHITE_PLAYER ? 9999 : -9999;
+            } else {
+                return 0;
+            }
+        }
         int n;
         double w = 0;
         double b = 0;
