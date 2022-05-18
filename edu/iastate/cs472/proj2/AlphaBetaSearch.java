@@ -14,13 +14,13 @@ public class AlphaBetaSearch extends AdversarialSearch {
 
     ChessMove AlphaBetaSearch(ChessMove[] legalMoves) {
         int depth = 3;
-        double min = 9999;
+        double min = 99999999;
         double value = 0;
         int lowestIndex = 0;
         for (int i = 0; i < legalMoves.length; i++) {
             ChessData temp_state = new ChessData(board);
             temp_state.makeMove(legalMoves[i]);
-            value = MaxValue(temp_state, ChessData.WHITE_PLAYER, depth - 1, -9999, 9999)[0];
+            value = MaxValue(temp_state, ChessData.WHITE_PLAYER, depth - 1, -99999999, 99999999)[0];
             if (min > value) {
                 min = value;
                 lowestIndex = i;

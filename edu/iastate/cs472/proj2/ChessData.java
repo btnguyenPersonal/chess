@@ -707,7 +707,9 @@ public class ChessData {
     }
 
     public double getEvaluation(int player) {
-        if (getLegalMoves(player) == null) {
+        ChessMove[] whiteMoves = getLegalMoves(WHITE_PLAYER);
+        ChessMove[] blackMoves = getLegalMoves(BLACK_PLAYER);
+        if ((player == WHITE_PLAYER && whiteMoves == null) || (player == BLACK_PLAYER && blackMoves == null)) {
             if (kingInCheck(this, player)) {
                 return player == WHITE_PLAYER ? 9999 : -9999;
             } else {
@@ -744,6 +746,12 @@ public class ChessData {
                     b += 9;
                 } else if (n == BLACK_KING) {
                     b += 1000;
+                }
+                if (whiteMoves != null) {
+                    w += whiteMoves.length * 0.0001;
+                }
+                if (blackMoves != null) {
+                    b += blackMoves.length * 0.0001;
                 }
             }
         }
