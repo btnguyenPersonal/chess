@@ -633,8 +633,8 @@ public class Chess extends JPanel {
                     g.setColor(Color.green);
                     for (ChessMove legalMove : legalMoves) {
                         if (legalMove.c1 == selectedCol && legalMove.r1 == selectedRow) {
-                            g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
-                            g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
+                            g.drawRect(2 + legalMove.c2 * 20, 2 + legalMove.r2 * 20, 19, 19);
+                            g.drawRect(3 + legalMove.c2 * 20, 3 + legalMove.r2 * 20, 17, 17);
                         }
                     }
                 }

@@ -121,11 +121,15 @@ public class ChessData {
     }
 
     void setPiece(int row, int col, int piece) {
-        board[row][col] = piece;
+        if ((piece == WHITE_PAWN && row == 0) || (piece == BLACK_PAWN && row == 7)) {
+            board[row][col] = (piece == WHITE_PAWN ? WHITE_QUEEN : BLACK_QUEEN);
+        } else {
+            board[row][col] = piece;
+        }
     }
 
     void makeMove(ChessMove move) {
-        makeMove(move.r1, move.c2, move.r2, move.c2);
+        makeMove(move.r1, move.c1, move.r2, move.c2);
     }
 
     void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
@@ -192,6 +196,33 @@ public class ChessData {
 
     ChessMove[] getPawnMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        if (player == WHITE_PLAYER) {
+            if (row == 6 && canMove(row, col, row - 2, col, player) && isEmpty(row - 1, col) && isEmpty(row - 2, col)) {
+                output.add(new ChessMove(row, col, row - 2, col));
+            }
+            if (canMove(row, col, row - 1, col, player) && isEmpty(row - 1, col)) {
+                output.add(new ChessMove(row, col, row - 1, col));
+            }
+            if (canMove(row, col, row - 1, col - 1, player) && !isEmpty(row - 1, col - 1)) {
+                output.add(new ChessMove(row, col, row - 1, col - 1));
+            }
+            if (canMove(row, col, row - 1, col + 1, player) && !isEmpty(row - 1, col + 1)) {
+                output.add(new ChessMove(row, col, row - 1, col + 1));
+            }
+        } else {
+            if (row == 1 && canMove(row, col, row + 2, col, player) && isEmpty(row + 1, col) && isEmpty(row + 2, col)) {
+                output.add(new ChessMove(row, col, row + 2, col));
+            }
+            if (canMove(row, col, row + 1, col, player) && isEmpty(row + 1, col)) {
+                output.add(new ChessMove(row, col, row + 1, col));
+            }
+            if (canMove(row, col, row + 1, col - 1, player) && !isEmpty(row + 1, col - 1)) {
+                output.add(new ChessMove(row, col, row + 1, col - 1));
+            }
+            if (canMove(row, col, row + 1, col + 1, player) && !isEmpty(row + 1, col + 1)) {
+                output.add(new ChessMove(row, col, row + 1, col + 1));
+            }
+        }
         return convertToArray(output);
     }
 
@@ -225,7 +256,7 @@ public class ChessData {
     }
 
     boolean canMove(int row1, int col1, int row2, int col2, int player) {
-        return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), player));
+        return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), swapPlayer(player)));
     }
 
     boolean isEmpty(int piece) {
