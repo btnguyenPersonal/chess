@@ -31,10 +31,8 @@ public class MonteCarloTreeSearch extends AdversarialSearch {
                 child = child.getRandomMove();
             }
             double result = simulate(child);
-            //gameTree.printTree();
             backpropogate(result, child);
         }
-        //gameTree.printTree();
         // return best move
         return gameTree.getBestMove();
     }
@@ -61,9 +59,10 @@ public class MonteCarloTreeSearch extends AdversarialSearch {
             return 1;
         }
         while (!temp.isGameOver(temp.player)) {
+            //System.out.println(temp.data);
             temp = temp.simulateRandomMove();
         }
-        System.out.println(temp.data);
+        //System.out.println(temp.data);
         return temp.getGameScore(temp.player);
     }
 

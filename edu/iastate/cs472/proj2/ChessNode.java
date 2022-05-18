@@ -131,9 +131,7 @@ public class ChessNode
         int randindex = 0;
         for (ChessMove move : moves) {
             if (move.isCapture(data)) {
-                randindex += 10;
-            } else if (move.isCheck(data)) {
-                randindex += 8;
+                randindex += 3;
             } else {
                 randindex++;
             }
@@ -142,18 +140,17 @@ public class ChessNode
         int index = r.nextInt(randindex);
         ChessData temp_board = new ChessData(data);
         for (int i = 0; i < moves.length; i++) {
-            if (move.isCapture(data)) {
-                randindex -= 10;
-            } else if (move.isCheck(data)) {
-                randindex -= 8;
+            if (moves[i].isCapture(data)) {
+                randindex -= 3;
             } else {
                 randindex--;
             }
-            if (randindex <= 0) {
+            if (randindex <= index) {
                 temp_board.makeMove(moves[i]);
-                break;
+                return new ChessNode(temp_board, null, null, swapPlayer(player));
             }
         }
+        temp_board.makeMove(moves[-1]);
         return new ChessNode(temp_board, null, null, swapPlayer(player));
     }
 

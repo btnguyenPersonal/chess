@@ -313,7 +313,7 @@ public class ChessData {
         return new ChessMove[0];
     }
 
-    private boolean inCheck(ChessData startBoard, int row, int col, int player) {
+    public boolean inCheck(ChessData startBoard, int row, int col, int player) {
         if (startBoard.board[row][col] == EMPTY || (player == WHITE_PLAYER && startBoard.board[row][col] == WHITE_KING) || (player == BLACK_PLAYER && startBoard.board[row][col] == BLACK_KING)) {
             boolean inCheck = false;
             ChessData temp = new ChessData(startBoard);
@@ -331,14 +331,14 @@ public class ChessData {
     private ChessMove[] getPawnMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         if (player == WHITE_PLAYER) {
-            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.r2 == row && lastMove.c2 == col - 1) {
                 if (canMove(row, col, row - 1, col - 1, player) && isEmpty(row - 1, col - 1)) {
                     ChessMove m = new ChessMove(row, col, row - 1, col - 1);
                     m.setEnPassant();
                     output.add(m);
                 }
             }
-            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.r2 == row && lastMove.c2 == col + 1) {
                 if (canMove(row, col, row - 1, col + 1, player) && isEmpty(row - 1, col + 1)) {
                     ChessMove m = new ChessMove(row, col, row - 1, col + 1);
                     m.setEnPassant();
@@ -360,14 +360,14 @@ public class ChessData {
                 output.add(new ChessMove(row, col, row - 1, col + 1));
             }
         } else {
-            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1 && lastMove.r2 == row) {
                 if (canMove(row, col, row + 1, col - 1, player) && isEmpty(row + 1, col - 1)) {
                     ChessMove m = new ChessMove(row, col, row + 1, col - 1);
                     m.setEnPassant();
                     output.add(m);
                 }
             }
-            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1 && lastMove.r2 == row) {
                 if (canMove(row, col, row + 1, col + 1, player) && isEmpty(row + 1, col + 1)) {
                     ChessMove m = new ChessMove(row, col, row + 1, col + 1);
                     m.setEnPassant();
