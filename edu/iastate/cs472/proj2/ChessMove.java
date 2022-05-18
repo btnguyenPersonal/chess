@@ -36,12 +36,31 @@ public class ChessMove {
         return getCoors();
     }
 
+    public String convert(int input) {
+        switch (input) {
+            case 0:
+                return "a";
+            case 1:
+                return "b";
+            case 2:
+                return "c";
+            case 3:
+                return "d";
+            case 4:
+                return "e";
+            case 5:
+                return "f";
+            case 6:
+                return "g";
+            case 7:
+                return "h";
+        }
+        return "error";
+    }
+
     public String getCoors() {
         String output = "\nMove:\n";
-        output += "    (" + r1 + ", " + c1 + ")";
-        output += "\n";
-        output += "    (" + r2 + ", " + c2 + ")";
-        output += "\n";
+        output += "     " + convert(c1) + (r1 + 1) + convert(c2) + (r2 + 1);
         return output;
     }
 

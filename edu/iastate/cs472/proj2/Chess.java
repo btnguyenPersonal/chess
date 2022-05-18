@@ -182,7 +182,7 @@ public class Chess extends JPanel {
                             g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.BLACK);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.WHITE_BISHOP:
                             g.setColor(Color.WHITE);
@@ -448,7 +448,11 @@ public class Chess extends JPanel {
                 currentPlayer = ChessData.BLACK_PLAYER;
                 legalMoves = board.getLegalMoves(currentPlayer);
                 if (legalMoves == null) {
-                    gameOver("BLACK has no moves.  WHITE wins.");
+                    if (board.getEvaluation(currentPlayer) == 0) {
+                        gameOver("Stalemate. Draw");
+                    } else {
+                        gameOver("BLACK has no moves.  WHITE wins.");
+                    }
                     displayBoard = copyBoard(board);
                     previous.drawBoard(board, moveAI);
                     repaint();
@@ -486,10 +490,15 @@ public class Chess extends JPanel {
 
             currentPlayer = ChessData.WHITE_PLAYER;
             legalMoves = board.getLegalMoves(currentPlayer);
-            if (legalMoves == null)
-                gameOver("WHITE has no moves.  BLACK wins.");
-            else
+            if (legalMoves == null) {
+                if (board.getEvaluation(currentPlayer) == 0) {
+                    gameOver("Stalemate. Draw");
+                } else {
+                    gameOver("WHITE has no moves.  BLACK wins.");
+                }
+            } else {
                 message.setText("WHITE:  Make your move.");
+            }
 
             /* Set selectedRow = -1 to record that the player has not yet selected
                a piece to move. */
@@ -553,7 +562,7 @@ public class Chess extends JPanel {
                             g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.BLACK);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.WHITE_BISHOP:
                             g.setColor(Color.WHITE);
@@ -633,8 +642,8 @@ public class Chess extends JPanel {
                     g.setColor(Color.green);
                     for (ChessMove legalMove : legalMoves) {
                         if (legalMove.c1 == selectedCol && legalMove.r1 == selectedRow) {
-                            g.drawRect(2 + legalMove.c1 * 20, 2 + legalMove.r1 * 20, 19, 19);
-                            g.drawRect(3 + legalMove.c1 * 20, 3 + legalMove.r1 * 20, 17, 17);
+                            g.drawRect(2 + legalMove.c2 * 20, 2 + legalMove.r2 * 20, 19, 19);
+                            g.drawRect(3 + legalMove.c2 * 20, 3 + legalMove.r2 * 20, 17, 17);
                         }
                     }
                 }
