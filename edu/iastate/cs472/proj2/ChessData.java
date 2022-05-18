@@ -187,7 +187,7 @@ public class ChessData {
         ChessMove[] temp;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                temp = getLegalMovesSingle(row, col, player);
+                temp = getLegalMovesSingle(row, col, player, false);
                 for (int i = 0; i < temp.length; i++) {
                     output.add(temp[i]);
                 }
@@ -205,7 +205,7 @@ public class ChessData {
         ChessMove[] temp;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                temp = getLegalMovesSingle(row, col, player);
+                temp = getLegalMovesSingle(row, col, player, true);
                 for (int i = 0; i < temp.length; i++) {
                     output.add(temp[i]);
                 }
@@ -247,7 +247,7 @@ public class ChessData {
         return legalMoves;
     }
 
-    private ChessMove[] getLegalMovesSingle(int row, int col, int player) {
+    private ChessMove[] getLegalMovesSingle(int row, int col, int player, boolean checkForCastle) {
         if (player == WHITE_PLAYER && !isEmpty(pieceAt(row, col))) {
             switch (pieceAt(row, col)) {
                 case WHITE_PAWN:
@@ -261,7 +261,7 @@ public class ChessData {
                 case WHITE_QUEEN:
                     return getQueenMoves(row, col, player);
                 case WHITE_KING:
-                    return getKingMoves(row, col, player);
+                    return getKingMoves(row, col, player, checkForCastle);
             }
         } else if (player == BLACK_PLAYER && !isEmpty(pieceAt(row, col))) {
             switch (pieceAt(row, col)) {
@@ -276,10 +276,25 @@ public class ChessData {
                 case BLACK_QUEEN:
                     return getQueenMoves(row, col, player);
                 case BLACK_KING:
-                    return getKingMoves(row, col, player);
+                    return getKingMoves(row, col, player, checkForCastle);
             }
         }
         return new ChessMove[0];
+    }
+
+    private boolean inCheck(ChessData startBoard, int row, int col, int player) {
+        if (startBoard.board[row][col] == EMPTY || (player == WHITE_PLAYER && startBoard.board[row][col] == WHITE_KING) || (player == BLACK_PLAYER && startBoard.board[row][col] == BLACK_KING)) {
+            boolean inCheck = false;
+            ChessData temp = new ChessData(startBoard);
+            ChessMove[] counterMoves = temp.getLegalMovesUnsafe(player);
+            for (ChessMove tempMove : counterMoves) {
+                if (tempMove.r2 == row && tempMove.c2 == col) {
+                    inCheck = true;
+                }
+            }
+            return inCheck;
+        }
+        return true;
     }
 
     private ChessMove[] getPawnMoves(int row, int col, int player) {
@@ -451,8 +466,20 @@ public class ChessData {
         return convertToArray(output);
     }
 
-    private ChessMove[] getKingMoves(int row, int col, int player) {
+    private ChessMove[] getKingMoves(int row, int col, int player, boolean checkForCastle) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        if (!checkForCastle) {
+            if ((player == WHITE_PLAYER && !whiteKingHasMoved) || (player == BLACK_PLAYER && !blackKingHasMoved)) {
+                if (((player == WHITE_PLAYER && !whiteRookRightHasMoved) || (player == BLACK_PLAYER && !blackRookRightHasMoved))
+                        && !inCheck(this, row, col + 1, swapPlayer(player)) && !inCheck(this, row, col + 2, swapPlayer(player))) {
+                    output.add(new ChessMove(row, col, row, col + 2));
+                }
+                if (((player == WHITE_PLAYER && !whiteRookLeftHasMoved) || (player == BLACK_PLAYER && !blackRookLeftHasMoved))
+                        && !inCheck(this, row, col - 1, swapPlayer(player)) && !inCheck(this, row, col - 2, swapPlayer(player)) && !inCheck(this, row, col - 3, swapPlayer(player))) {
+                    output.add(new ChessMove(row, col, row, col - 2));
+                }
+            }
+        }
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 if (!(i == 0 && j == 0) && !isOutOfBounds(row + i, col + j) && canMove(row, col, row + i, col + j, player)) {
