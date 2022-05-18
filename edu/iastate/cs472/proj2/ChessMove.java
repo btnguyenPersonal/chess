@@ -58,6 +58,21 @@ public class ChessMove {
         return "error";
     }
 
+    public boolean isCheck(ChessData state) {
+
+        if (state.board[r2][c2] == WHITE_KING || state.board[r2][c2] == BLACK_KING) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isCapture(ChessData state) {
+        if (state.board[r2][c2] != ChessData.EMPTY) {
+            return true;
+        }
+        return false;
+    }
+
     public String getCoors() {
         String output = "\nMove:\n";
         output += "     " + convert(c1) + (r1 + 1) + convert(c2) + (r2 + 1);

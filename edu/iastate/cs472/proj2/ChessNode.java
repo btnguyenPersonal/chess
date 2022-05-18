@@ -128,10 +128,32 @@ public class ChessNode
 
     public ChessNode simulateRandomMove() {
         ChessMove[] moves = data.getLegalMoves(player);
+        int randindex = 0;
+        for (ChessMove move : moves) {
+            if (move.isCapture(data)) {
+                randindex += 10;
+            } else if (move.isCheck(data)) {
+                randindex += 8;
+            } else {
+                randindex++;
+            }
+        }
         Random r = new Random();
-        int index = r.nextInt(moves.length);
+        int index = r.nextInt(randindex);
         ChessData temp_board = new ChessData(data);
-        temp_board.makeMove(moves[index]);
+        for (int i = 0; i < moves.length; i++) {
+            if (move.isCapture(data)) {
+                randindex -= 10;
+            } else if (move.isCheck(data)) {
+                randindex -= 8;
+            } else {
+                randindex--;
+            }
+            if (randindex <= 0) {
+                temp_board.makeMove(moves[i]);
+                break;
+            }
+        }
         return new ChessNode(temp_board, null, null, swapPlayer(player));
     }
 
