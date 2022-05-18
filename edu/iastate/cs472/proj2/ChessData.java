@@ -116,49 +116,153 @@ public class ChessData {
         board[7][7] = WHITE_ROOK;
     }
 
-    /**
-     * Return the contents of the square in the specified row and column.
-     */
     int pieceAt(int row, int col) {
         return board[row][col];
     }
 
+    void setPiece(int row, int col, int piece) {
+        board[row][col] = piece;
+    }
+
     void makeMove(ChessMove move) {
-        // TODO
+        makeMove(move.r1, move.c2, move.r2, move.c2);
     }
 
-    /**
-     * Make the move from (fromRow,fromCol) to (toRow,toCol).
-     */
     void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
-        // TODO
+        setPiece(toRow, toCol, pieceAt(fromRow, fromCol));
+        setPiece(fromRow, fromCol, EMPTY);
     }
 
-    /**
-     * Return an array containing all the legal ChessMoves
-     * for the specified player on the current board. If the player
-     * has no legal moves, null is returned. The value of player
-     * should be one of the constants RED or BLACK; if not, null
-     * is returned. If the returned value is non-null, it consists
-     * entirely of jump moves or entirely of regular moves, since
-     * if the player can jump, only jumps are legal moves.
-     *
-     * @param player color of the player, RED or BLACK
-     */
     ChessMove[] getLegalMoves(int player) {
-        // TODO
-        ArrayList<ChessMove> legalMoves = new ArrayList<ChessMove>();
-        ChessMove[] output = new ChessMove[1];
-        output[0] = new ChessMove(0, 0, 1, 1);
-        return output;
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        ChessMove[] temp;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                temp = getLegalMovesSingle(row, col, player);
+                for (int i = 0; i < temp.length; i++) {
+                    output.add(temp[i]);
+                }
+            }
+        }
+        return convertToArray(output);
+    }
+
+    ChessMove[] convertToArray(ArrayList<ChessMove> output) {
+        ChessMove[] legalMoves = new ChessMove[output.size()];
+        for (int i = 0; i < output.size(); i++) {
+            legalMoves[i] = output.get(i);
+        }
+        return legalMoves;
+    }
+
+    ChessMove[] getLegalMovesSingle(int row, int col, int player) {
+        if (player == WHITE_PLAYER && !isEmpty(pieceAt(row, col))) {
+            switch (pieceAt(row, col)) {
+                case WHITE_PAWN:
+                    return getPawnMoves(row, col, player);
+                case WHITE_ROOK:
+                    return getRookMoves(row, col, player);
+                case WHITE_KNIGHT:
+                    return getKnightMoves(row, col, player);
+                case WHITE_BISHOP:
+                    return getBishopMoves(row, col, player);
+                case WHITE_QUEEN:
+                    return getQueenMoves(row, col, player);
+                case WHITE_KING:
+                    return getKingMoves(row, col, player);
+            }
+        } else if (player == BLACK_PLAYER && !isEmpty(pieceAt(row, col))) {
+            switch (pieceAt(row, col)) {
+                case BLACK_PAWN:
+                    return getPawnMoves(row, col, player);
+                case BLACK_ROOK:
+                    return getRookMoves(row, col, player);
+                case BLACK_KNIGHT:
+                    return getKnightMoves(row, col, player);
+                case BLACK_BISHOP:
+                    return getBishopMoves(row, col, player);
+                case BLACK_QUEEN:
+                    return getQueenMoves(row, col, player);
+                case BLACK_KING:
+                    return getKingMoves(row, col, player);
+            }
+        }
+        return new ChessMove[0];
+    }
+
+    ChessMove[] getPawnMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    ChessMove[] getRookMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    ChessMove[] getKnightMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    ChessMove[] getBishopMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    ChessMove[] getKingMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    ChessMove[] getQueenMoves(int row, int col, int player) {
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        return convertToArray(output);
+    }
+
+    int swapPlayer(int player) {
+        return player == WHITE_PLAYER ? BLACK_PLAYER : WHITE_PLAYER;
+    }
+
+    boolean canMove(int row1, int col1, int row2, int col2, int player) {
+        return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), player));
+    }
+
+    boolean isEmpty(int piece) {
+        return piece == EMPTY;
+    }
+
+    boolean isEmpty(int row, int col) {
+        return !isOutOfBounds(row, col) && isEmpty(pieceAt(row, col));
+    }
+
+    boolean isPlayer(int piece, int player) {
+        if (player == WHITE_PLAYER) {
+            return piece == WHITE_PAWN
+                || piece == WHITE_ROOK
+                || piece == WHITE_KNIGHT
+                || piece == WHITE_BISHOP
+                || piece == WHITE_KING
+                || piece == WHITE_QUEEN;
+        } else {
+            return piece == BLACK_PAWN
+                || piece == BLACK_ROOK
+                || piece == BLACK_KNIGHT
+                || piece == BLACK_BISHOP
+                || piece == BLACK_KING
+                || piece == BLACK_QUEEN;
+        }
+    }
+
+    boolean isOutOfBounds(int row, int col) {
+        if (row < 0 || row > 7 || col < 0 || col > 7) {
+            return true;
+        }
+        return false;
     }
 
     boolean checkIf(int row, int col, int piece) {
-        if (row < 0 || row > 7 || col < 0 || col > 7) {
-            return false;
-        } else {
-            return board[row][col] == piece;
-        }
+        return !isOutOfBounds(row, col) && board[row][col] == piece;
     }
 
 }
