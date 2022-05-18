@@ -29,6 +29,13 @@ public class ChessData {
             BLACK_PLAYER = 1;
 
     int[][] board; // board[r][c] is the contents of row r, column c.
+    ChessMove lastMove = null;
+    boolean whiteKingHasMoved = false;
+    boolean whiteRookLeftHasMoved = false;
+    boolean whiteRookRightHasMoved = false;
+    boolean blackKingHasMoved = false;
+    boolean blackRookLeftHasMoved = false;
+    boolean blackRookRightHasMoved = false;
 
     /**
      * Constructor. Create the board and set it up for a new game.
@@ -45,6 +52,13 @@ public class ChessData {
                 this.board[i][j] = input.board[i][j];
             }
         }
+        this.lastMove               = input.lastMove;
+        this.whiteKingHasMoved      = input.whiteKingHasMoved;
+        this.whiteRookLeftHasMoved  = input.whiteRookLeftHasMoved;
+        this.whiteRookRightHasMoved = input.whiteRookRightHasMoved;
+        this.blackKingHasMoved      = input.blackKingHasMoved;
+        this.blackRookLeftHasMoved  = input.blackRookLeftHasMoved;
+        this.blackRookRightHasMoved = input.blackRookRightHasMoved;
     }
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -138,12 +152,34 @@ public class ChessData {
     }
 
     public void makeMove(ChessMove move) {
-        makeMove(move.r1, move.c1, move.r2, move.c2);
+        if (board[move.r1][move.c1] == BLACK_ROOK && move.r1 == 0 && move.c1 == 0) {
+            blackRookLeftHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == BLACK_ROOK && move.r1 == 0 && move.c1 == 7) {
+            blackRookRightHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_ROOK && move.r1 == 7 && move.c1 == 0) {
+            whiteRookLeftHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_ROOK && move.r1 == 7 && move.c1 == 7) {
+            whiteRookRightHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_KING) {
+            whiteKingHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == BLACK_KING) {
+            blackKingHasMoved = true;
+        }
+        lastMove = move;
+        makeMove(move.r1, move.c1, move.r2, move.c2, move.isEnPassant());
     }
 
-    public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
+    private void makeMove(int fromRow, int fromCol, int toRow, int toCol, boolean isEnPassant) {
         setPiece(toRow, toCol, pieceAt(fromRow, fromCol));
         setPiece(fromRow, fromCol, EMPTY);
+        if (isEnPassant) {
+            setPiece(fromRow, toCol, EMPTY);
+        }
     }
 
     public ChessMove[] getLegalMoves(int player) {
@@ -183,7 +219,6 @@ public class ChessData {
         for (ChessMove move : input) {
             ChessData temp = new ChessData(startBoard);
             temp.makeMove(move);
-            System.out.println(temp);
             if (!kingInCheck(temp, player)) {
                 output.add(move);
             }
@@ -250,8 +285,24 @@ public class ChessData {
     private ChessMove[] getPawnMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         if (player == WHITE_PLAYER) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+                if (canMove(row, col, row - 1, col - 1, player) && isEmpty(row - 1, col - 1)) {
+                    ChessMove m = new ChessMove(row, col, row - 1, col - 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+                if (canMove(row, col, row - 1, col + 1, player) && isEmpty(row - 1, col + 1)) {
+                    ChessMove m = new ChessMove(row, col, row - 1, col + 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
             if (row == 6 && canMove(row, col, row - 2, col, player) && isEmpty(row - 1, col) && isEmpty(row - 2, col)) {
-                output.add(new ChessMove(row, col, row - 2, col));
+                ChessMove m = new ChessMove(row, col, row - 2, col);
+                m.doubleMove = true;
+                output.add(m);
             }
             if (canMove(row, col, row - 1, col, player) && isEmpty(row - 1, col)) {
                 output.add(new ChessMove(row, col, row - 1, col));
@@ -263,8 +314,24 @@ public class ChessData {
                 output.add(new ChessMove(row, col, row - 1, col + 1));
             }
         } else {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+                if (canMove(row, col, row + 1, col - 1, player) && isEmpty(row + 1, col - 1)) {
+                    ChessMove m = new ChessMove(row, col, row + 1, col - 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+                if (canMove(row, col, row + 1, col + 1, player) && isEmpty(row + 1, col + 1)) {
+                    ChessMove m = new ChessMove(row, col, row + 1, col + 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
             if (row == 1 && canMove(row, col, row + 2, col, player) && isEmpty(row + 1, col) && isEmpty(row + 2, col)) {
-                output.add(new ChessMove(row, col, row + 2, col));
+                ChessMove m = new ChessMove(row, col, row + 2, col);
+                m.doubleMove = true;
+                output.add(m);
             }
             if (canMove(row, col, row + 1, col, player) && isEmpty(row + 1, col)) {
                 output.add(new ChessMove(row, col, row + 1, col));
@@ -486,7 +553,6 @@ public class ChessData {
     }
 
     private boolean canMove(int row1, int col1, int row2, int col2, int player) {
-        // TODO need to add not unprotecting the king from getting taken
         return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), swapPlayer(player)));
     }
 
