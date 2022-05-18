@@ -29,6 +29,13 @@ public class ChessData {
             BLACK_PLAYER = 1;
 
     int[][] board; // board[r][c] is the contents of row r, column c.
+    ChessMove lastMove = null;
+    boolean whiteKingHasMoved = false;
+    boolean whiteRookLeftHasMoved = false;
+    boolean whiteRookRightHasMoved = false;
+    boolean blackKingHasMoved = false;
+    boolean blackRookLeftHasMoved = false;
+    boolean blackRookRightHasMoved = false;
 
     /**
      * Constructor. Create the board and set it up for a new game.
@@ -45,6 +52,13 @@ public class ChessData {
                 this.board[i][j] = input.board[i][j];
             }
         }
+        this.lastMove               = input.lastMove;
+        this.whiteKingHasMoved      = input.whiteKingHasMoved;
+        this.whiteRookLeftHasMoved  = input.whiteRookLeftHasMoved;
+        this.whiteRookRightHasMoved = input.whiteRookRightHasMoved;
+        this.blackKingHasMoved      = input.blackKingHasMoved;
+        this.blackRookLeftHasMoved  = input.blackRookLeftHasMoved;
+        this.blackRookRightHasMoved = input.blackRookRightHasMoved;
     }
 
     public static final String ANSI_RESET = "\u001B[0m";
@@ -123,6 +137,13 @@ public class ChessData {
         board[7][5] = WHITE_BISHOP;
         board[7][6] = WHITE_KNIGHT;
         board[7][7] = WHITE_ROOK;
+        ChessMove lastMove = null;
+        whiteKingHasMoved = false;
+        whiteRookLeftHasMoved = false;
+        whiteRookRightHasMoved = false;
+        blackKingHasMoved = false;
+        blackRookLeftHasMoved = false;
+        blackRookRightHasMoved = false;
     }
 
     public int pieceAt(int row, int col) {
@@ -138,12 +159,58 @@ public class ChessData {
     }
 
     public void makeMove(ChessMove move) {
-        makeMove(move.r1, move.c1, move.r2, move.c2);
+        if (board[move.r1][move.c1] == BLACK_ROOK && move.r1 == 0 && move.c1 == 0) {
+            blackRookLeftHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == BLACK_ROOK && move.r1 == 0 && move.c1 == 7) {
+            blackRookRightHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_ROOK && move.r1 == 7 && move.c1 == 0) {
+            whiteRookLeftHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_ROOK && move.r1 == 7 && move.c1 == 7) {
+            whiteRookRightHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == WHITE_KING) {
+            whiteKingHasMoved = true;
+        }
+        if (board[move.r1][move.c1] == BLACK_KING) {
+            blackKingHasMoved = true;
+        }
+        lastMove = move;
+        makeMove(move.r1, move.c1, move.r2, move.c2, move.isEnPassant());
+        if (board[move.r2][move.c2] == BLACK_KING && move.c2 - move.c1 == -2) {
+            blackKingHasMoved = true;
+            blackRookLeftHasMoved = true;
+            setPiece(0, 3, BLACK_ROOK);
+            setPiece(0, 0, EMPTY);
+        }
+        if (board[move.r2][move.c2] == BLACK_KING && move.c2 - move.c1 == 2) {
+            blackKingHasMoved = true;
+            blackRookRightHasMoved = true;
+            setPiece(0, 5, BLACK_ROOK);
+            setPiece(0, 7, EMPTY);
+        }
+        if (board[move.r2][move.c2] == WHITE_KING && move.c2 - move.c1 == -2) {
+            whiteKingHasMoved = true;
+            whiteRookLeftHasMoved = true;
+            setPiece(7, 3, WHITE_ROOK);
+            setPiece(7, 0, EMPTY);
+        }
+        if (board[move.r2][move.c2] == WHITE_KING && move.c2 - move.c1 == 2) {
+            whiteKingHasMoved = true;
+            whiteRookRightHasMoved = true;
+            setPiece(7, 5, WHITE_ROOK);
+            setPiece(7, 7, EMPTY);
+        }
     }
 
-    public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
+    private void makeMove(int fromRow, int fromCol, int toRow, int toCol, boolean isEnPassant) {
         setPiece(toRow, toCol, pieceAt(fromRow, fromCol));
         setPiece(fromRow, fromCol, EMPTY);
+        if (isEnPassant) {
+            setPiece(fromRow, toCol, EMPTY);
+        }
     }
 
     public ChessMove[] getLegalMoves(int player) {
@@ -151,7 +218,7 @@ public class ChessData {
         ChessMove[] temp;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                temp = getLegalMovesSingle(row, col, player);
+                temp = getLegalMovesSingle(row, col, player, false);
                 for (int i = 0; i < temp.length; i++) {
                     output.add(temp[i]);
                 }
@@ -169,7 +236,7 @@ public class ChessData {
         ChessMove[] temp;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                temp = getLegalMovesSingle(row, col, player);
+                temp = getLegalMovesSingle(row, col, player, true);
                 for (int i = 0; i < temp.length; i++) {
                     output.add(temp[i]);
                 }
@@ -211,7 +278,7 @@ public class ChessData {
         return legalMoves;
     }
 
-    private ChessMove[] getLegalMovesSingle(int row, int col, int player) {
+    private ChessMove[] getLegalMovesSingle(int row, int col, int player, boolean checkForCastle) {
         if (player == WHITE_PLAYER && !isEmpty(pieceAt(row, col))) {
             switch (pieceAt(row, col)) {
                 case WHITE_PAWN:
@@ -225,7 +292,7 @@ public class ChessData {
                 case WHITE_QUEEN:
                     return getQueenMoves(row, col, player);
                 case WHITE_KING:
-                    return getKingMoves(row, col, player);
+                    return getKingMoves(row, col, player, checkForCastle);
             }
         } else if (player == BLACK_PLAYER && !isEmpty(pieceAt(row, col))) {
             switch (pieceAt(row, col)) {
@@ -240,17 +307,48 @@ public class ChessData {
                 case BLACK_QUEEN:
                     return getQueenMoves(row, col, player);
                 case BLACK_KING:
-                    return getKingMoves(row, col, player);
+                    return getKingMoves(row, col, player, checkForCastle);
             }
         }
         return new ChessMove[0];
     }
 
+    private boolean inCheck(ChessData startBoard, int row, int col, int player) {
+        if (startBoard.board[row][col] == EMPTY || (player == WHITE_PLAYER && startBoard.board[row][col] == WHITE_KING) || (player == BLACK_PLAYER && startBoard.board[row][col] == BLACK_KING)) {
+            boolean inCheck = false;
+            ChessData temp = new ChessData(startBoard);
+            ChessMove[] counterMoves = temp.getLegalMovesUnsafe(player);
+            for (ChessMove tempMove : counterMoves) {
+                if (tempMove.r2 == row && tempMove.c2 == col) {
+                    inCheck = true;
+                }
+            }
+            return inCheck;
+        }
+        return true;
+    }
+
     private ChessMove[] getPawnMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
         if (player == WHITE_PLAYER) {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+                if (canMove(row, col, row - 1, col - 1, player) && isEmpty(row - 1, col - 1)) {
+                    ChessMove m = new ChessMove(row, col, row - 1, col - 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+                if (canMove(row, col, row - 1, col + 1, player) && isEmpty(row - 1, col + 1)) {
+                    ChessMove m = new ChessMove(row, col, row - 1, col + 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
             if (row == 6 && canMove(row, col, row - 2, col, player) && isEmpty(row - 1, col) && isEmpty(row - 2, col)) {
-                output.add(new ChessMove(row, col, row - 2, col));
+                ChessMove m = new ChessMove(row, col, row - 2, col);
+                m.doubleMove = true;
+                output.add(m);
             }
             if (canMove(row, col, row - 1, col, player) && isEmpty(row - 1, col)) {
                 output.add(new ChessMove(row, col, row - 1, col));
@@ -262,8 +360,24 @@ public class ChessData {
                 output.add(new ChessMove(row, col, row - 1, col + 1));
             }
         } else {
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col - 1) {
+                if (canMove(row, col, row + 1, col - 1, player) && isEmpty(row + 1, col - 1)) {
+                    ChessMove m = new ChessMove(row, col, row + 1, col - 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
+            if (lastMove != null && lastMove.doubleMove == true && lastMove.c2 == col + 1) {
+                if (canMove(row, col, row + 1, col + 1, player) && isEmpty(row + 1, col + 1)) {
+                    ChessMove m = new ChessMove(row, col, row + 1, col + 1);
+                    m.setEnPassant();
+                    output.add(m);
+                }
+            }
             if (row == 1 && canMove(row, col, row + 2, col, player) && isEmpty(row + 1, col) && isEmpty(row + 2, col)) {
-                output.add(new ChessMove(row, col, row + 2, col));
+                ChessMove m = new ChessMove(row, col, row + 2, col);
+                m.doubleMove = true;
+                output.add(m);
             }
             if (canMove(row, col, row + 1, col, player) && isEmpty(row + 1, col)) {
                 output.add(new ChessMove(row, col, row + 1, col));
@@ -383,8 +497,20 @@ public class ChessData {
         return convertToArray(output);
     }
 
-    private ChessMove[] getKingMoves(int row, int col, int player) {
+    private ChessMove[] getKingMoves(int row, int col, int player, boolean checkForCastle) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        if (!checkForCastle) {
+            if ((player == WHITE_PLAYER && !whiteKingHasMoved) || (player == BLACK_PLAYER && !blackKingHasMoved)) {
+                if (((player == WHITE_PLAYER && !whiteRookRightHasMoved) || (player == BLACK_PLAYER && !blackRookRightHasMoved))
+                        && !inCheck(this, row, col + 1, swapPlayer(player)) && !inCheck(this, row, col + 2, swapPlayer(player))) {
+                    output.add(new ChessMove(row, col, row, col + 2));
+                }
+                if (((player == WHITE_PLAYER && !whiteRookLeftHasMoved) || (player == BLACK_PLAYER && !blackRookLeftHasMoved))
+                        && !inCheck(this, row, col - 1, swapPlayer(player)) && !inCheck(this, row, col - 2, swapPlayer(player)) && !inCheck(this, row, col - 3, swapPlayer(player))) {
+                    output.add(new ChessMove(row, col, row, col - 2));
+                }
+            }
+        }
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 if (!(i == 0 && j == 0) && !isOutOfBounds(row + i, col + j) && canMove(row, col, row + i, col + j, player)) {
@@ -485,7 +611,6 @@ public class ChessData {
     }
 
     private boolean canMove(int row1, int col1, int row2, int col2, int player) {
-        // TODO need to add not unprotecting the king from getting taken
         return !isOutOfBounds(row2, col2) && (isEmpty(pieceAt(row2, col2)) || isPlayer(pieceAt(row2, col2), swapPlayer(player)));
     }
 
