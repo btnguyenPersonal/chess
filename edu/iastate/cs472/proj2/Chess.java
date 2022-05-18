@@ -182,7 +182,7 @@ public class Chess extends JPanel {
                             g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.BLACK);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.WHITE_BISHOP:
                             g.setColor(Color.WHITE);
@@ -553,7 +553,7 @@ public class Chess extends JPanel {
                             g.setColor(Color.WHITE);
                             g.fillOval(4 + col*20, 4 + row*20, 15, 15);
                             g.setColor(Color.BLACK);
-                            g.drawString("K", 7 + col*20, 16 + row*20);
+                            g.drawString("N", 7 + col*20, 16 + row*20);
                             break;
                         case ChessData.WHITE_BISHOP:
                             g.setColor(Color.WHITE);

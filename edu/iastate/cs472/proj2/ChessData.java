@@ -273,6 +273,16 @@ public class ChessData {
 
     private ChessMove[] getKnightMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = -1; i <= 1; i += 2) {
+            for (int j = -2; j <= 2; j += 4) {
+                if (canMove(row, col, row + i, col + j, player)) {
+                    output.add(new ChessMove(row, col, row + i, col + j));
+                }
+                if (canMove(row, col, row + j, col + i, player)) {
+                    output.add(new ChessMove(row, col, row + j, col + i));
+                }
+            }
+        }
         return convertToArray(output);
     }
 
