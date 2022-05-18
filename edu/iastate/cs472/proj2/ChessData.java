@@ -333,11 +333,98 @@ public class ChessData {
 
     private ChessMove[] getKingMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (!(i == 0 && j == 0) && !isOutOfBounds(row + i, col + j) && canMove(row, col, row + i, col + j, player)) {
+                    output.add(new ChessMove(row, col, row + i, col + j));
+                }
+            }
+        }
         return convertToArray(output);
     }
 
     private ChessMove[] getQueenMoves(int row, int col, int player) {
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col - i) || !canMove(row, col, row + i, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col - i, player) && !isEmpty(row + i, col - i)) {
+                output.add(new ChessMove(row, col, row + i, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col - i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col - i) || !canMove(row, col, row - i, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col - i, player) && !isEmpty(row - i, col - i)) {
+                output.add(new ChessMove(row, col, row - i, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col - i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col + i) || !canMove(row, col, row + i, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col + i, player) && !isEmpty(row + i, col + i)) {
+                output.add(new ChessMove(row, col, row + i, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col + i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col + i) || !canMove(row, col, row - i, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col + i, player) && !isEmpty(row - i, col + i)) {
+                output.add(new ChessMove(row, col, row - i, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col + i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row + i, col) || !canMove(row, col, row + i, col, player)) {
+                break;
+            } else if (canMove(row, col, row + i, col, player) && !isEmpty(row + i, col)) {
+                output.add(new ChessMove(row, col, row + i, col));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row + i, col));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row - i, col) || !canMove(row, col, row - i, col, player)) {
+                break;
+            } else if (canMove(row, col, row - i, col, player) && !isEmpty(row - i, col)) {
+                output.add(new ChessMove(row, col, row - i, col));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row - i, col));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row, col + i) || !canMove(row, col, row, col + i, player)) {
+                break;
+            } else if (canMove(row, col, row, col + i, player) && !isEmpty(row, col + i)) {
+                output.add(new ChessMove(row, col, row, col + i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row, col + i));
+            }
+        }
+        for (int i = 1; i < 8; i++) {
+            if (isOutOfBounds(row, col - i) || !canMove(row, col, row, col - i, player)) {
+                break;
+            } else if (canMove(row, col, row, col - i, player) && !isEmpty(row, col - i)) {
+                output.add(new ChessMove(row, col, row, col - i));
+                break;
+            } else {
+                output.add(new ChessMove(row, col, row, col - i));
+            }
+        }
         return convertToArray(output);
     }
 
